@@ -3,53 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Practica1</title>
+    <title>Document</title>
 </head>
 <body>
-    <form action="recogida.php" method="post">
-  
-    
-    <label for="nombre">Nombre:</label>
-    <input type="text" id="Nombre" name="Nombre" /></br></br>
+    <h1>Rellena tu CV</h1>
+    <form action="recogida.php" method="post" enctype="multipart/form-data">
+        <p>
+            <label for="nombre">Nombre:</label><br>
+            <input type="text" name="nombre" id="nombre"><br>
+        </p>
 
-    <label for="apellidos">Apellidos:</label>
-    <input type="text" id="apellidos" name="Apellidos" /></br></br>
+        <p>
+            <label for="apellido">Apellido:</label><br>
+            <input type="text" name="apellido" id="apellido"><br>
+        </p>
 
-    <label for="contraseña">Contraseña:</label>
-    <input type="text" id="contraseña" name="Contraseña" /></br></br>
+        <p>
+            <label for="contraseña">Contraseña:</label><br>
+            <input type="password" name="contraseña" id="contraseña"><br>
+        </p>
 
-    <label for="dni">DNI:</label>
-    <input type="text" id="dni" name="DNI" /></br></br>
-    
+        <p>
+            <label for="dni">DNI:</label><br>
+            <input type="text" name="dni" id="dni"><br>
+        </p>
 
-    <label for="dni">Sexo:</label><br>
+        <p>
+            <label>Sexo:</label><br>
+            <input type="radio" name="sexo" id="hombre" value="Hombre">Hombre<br>
+            <input type="radio" name="sexo" id="mujer" value="Mujer">Mujer<br>
+        </p>
 
-    <input type="radio" id="Hombre" name="sexo" value="Hombre">
-    <label for="Hombre">Hombre</label><br>
+        <p>
+            <label for="foto">Incluir mi foto </label>
+            <input type="file" name="foto" id="foto" accept="image/*">
+        </p>
 
-    <input type="radio" id="Mujer" name="sexo" value="Mujer">
-    <label for="Mujer">Mujer</label><br>
-    
-    <label for="Nacido">Nacido:</label>
-    <select id="Nacido" name="Nacido" size="1" multiple>
-        <option value="Malaga">Malaga</option>
-        <option value="Sevilla">Sevilla</option>
-        <option value="Jaen">Jaen</option>
-    </select><br><br>
+        <p>
+            <label for="nacido">Nacido en:</label>
+            <select id="nacido" name="nacido">
+                <option value="Malaga">Malaga</option>
+                <option value="Sevilla">Sevilla</option>
+                <option value="Jaen" selected>Jaen</option>
+            </select>
+        </p>
 
-    <label for="msg">Comentarios:</label>
-    <textarea id="comentarios" name="Comentarios"></textarea></br></br>
+        <p>
+            <label for="comentarios">Comentario:</label>
+            <textarea id="comentarios" name="comentarios" rows="10" cols="50">Write something here</textarea>
+        </p>
 
+    <p>
+        <input type="checkbox" name="subscripcion" id="subscripcion" checked />
+        <label for="subscripcion">Subscribirse al boletin de Novedades</label><br/>
+    </p>
 
-
-    <input type="checkbox" name="Suscribirse" checked>Suscribirse al boletin de Novedades</br></br>
-
-
-
-    <input type="submit" value="Guardar Cambios">
-    <input type="reset" value="Borrar los datos introducidos">
-    
-<   /form>
-
+    <p>
+        <button type="submit" name="btenviar">Guardar Cambios</button>
+        <button type="reset" name="btborrar">Borrar los datos introducidos</button>
+    </p>
+</form>
 </body>
 </html>
