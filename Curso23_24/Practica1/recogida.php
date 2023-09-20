@@ -13,7 +13,10 @@
     echo "<p><strong>Nombre: </strong>" .$_POST["nombre"]."</p>";
     echo "<p><strong>Apellidos: </strong>" .$_POST["apellido"]."</p>";
     echo "<p><strong>Contraseña: </strong>" .$_POST["contraseña"]."</p>";
+    echo "<p><strong>DNI: </strong>" .$_POST["dni"]."</p>";
     
+
+
     if(isset($_POST["sexo"])){ //el isset es para decir si ha seleccionado sexo te devuelve true y si no false
 
         echo "<p><strong>Sexo: </strong>" .$_POST["sexo"]."</p>";
@@ -22,6 +25,22 @@
 
         echo "<p><strong>Sexo: </strong> No seleccionado</p>";
     }
+
+    echo "<p><strong>Nacido en: </strong>" .$_POST["nacido"]."</p>";
+    echo "<p><strong>Comentarios: </strong>" .$_POST["comentarios"]."</p>";
+
+
+
+    if(isset($_POST["subscripcion"])){ //el isset es para decir si ha seleccionado sexo te devuelve true y si no false
+
+
+        echo "<p><strong>Subscripcion: </strong> Si </p>";
+
+    }else {
+
+        echo "<p><strong>Subscripcion: </strong> No</p>";
+    }
+
     ?>
 </body>
 </html>
