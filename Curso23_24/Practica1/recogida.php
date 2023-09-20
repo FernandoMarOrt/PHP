@@ -1,10 +1,16 @@
-<!DOCTYPE html>
+<?php
+ if(isset($_POST["btenviar"])){
+
+    ?>
+        <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recogida</title>
 </head>
+
 <body>
     <h1>RECOGIDA DE DATOS</h1>
     <?php
@@ -44,3 +50,18 @@
     ?>
 </body>
 </html>
+
+    <?php
+
+    
+
+ }else {
+
+    header("Localtion:index.php");
+
+ }
+?>
+
+
+
+
