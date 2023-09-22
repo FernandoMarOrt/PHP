@@ -32,7 +32,7 @@
     if(isset($_POST["aficiones"])){  //falta aqui para editar lo de aficiones
 
 
-        echo "<p><strong>Aficiones: </strong> Deporte </p>";
+        echo "<p><strong>Aficiones: </strong> Deporte </p>"; 
 
     }else {
 
@@ -41,6 +41,8 @@
 
     echo "<p><strong>Comentarios: </strong>" .$_POST["comentarios"]."</p>";
 
+    
+    
     ?>
 </body>
 </html>
