@@ -115,7 +115,7 @@
             
                 <p>
                     <button type="submit" name="btenviar">Guardar Cambios</button>
-                    <button type="reset" name="btborrar">Borrar los datos introducidos</button>
+                    <button type="submit" name="btborrar">Borrar los datos introducidos</button>
                 </p>
             </form>
             </body>

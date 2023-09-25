@@ -1,5 +1,9 @@
 <?php
 
+    if(isset($_POST["btborrar"])){
+        
+        unset($_POST); //SI ESTA CREADO EL $_POST LO DESTRUYE PARA QUE SE PUEDAN BORRAR LOS DATOS
+    }
 
     if(isset($_POST["btenviar"])) { //COMPRUEBO ERRORES
 
