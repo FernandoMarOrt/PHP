@@ -37,7 +37,7 @@
             <p>Dime dos palabras y te dire si riman o no</p>
             <p>
                 <label for="primera">Primera palabra :</label>
-                <input type="text" name="primera" id="primera">
+                <input type="text" name="primera" id="primera" value="<?php if(isset($_POST['primera'])) echo $_POST['primera']?>"/>
                 <?php
                     if (isset($_POST["comparar"]) && $errorPrimera) {
                         echo "<span class='error'>*Introduce una palabra de al menos 3 letras*</span>";
@@ -46,7 +46,7 @@
             </p>
             <p>
                 <label for="segunda">Segunda palabra:</label>
-                <input type="text" name="segunda" id="segunda">
+                <input type="text" name="segunda" id="segunda" value="<?php if(isset($_POST['segunda'])) echo $_POST['segunda']?>"/>
                 <?php
                     if (isset($_POST["comparar"]) && $errorSegunda) {
                         echo "<span class='error'>*Introduce una palabra de al menos 3 letras*</span>";
