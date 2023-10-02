@@ -95,6 +95,8 @@
 
                     echo '<p>Texto original';
 
+                    
+
                     echo '<p>Texto sin acentos';
 
                     echo '<p> El numero '.$_POST['primera'].' se escribe en numeros en romanos</p>';
