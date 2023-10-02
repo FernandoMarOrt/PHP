@@ -95,7 +95,7 @@
 
                     echo '<p>Texto original';
 
-                    
+                    echo '<p>'.eliminar_acentos($_POST['primera']).'</p>';
 
                     echo '<p>Texto sin acentos';
 
