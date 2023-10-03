@@ -64,19 +64,12 @@
             }
 
 
-            function es_correcto_romano($texto){
-
-                if(!is_numeric($texto) || $texto < 0)
-
-                
-            }
-
             //Si los campos estan vacios o no contienen la longitud adecuada
             if (isset($_POST["comparar"])) {
 
 
                 $texto=trim($_POST['primera']);
-                $errorPrimera = $_POST["primera"] == "" || !es_correcto_romano($texto);
+                $errorPrimera = $_POST["primera"] == "" || !is_numeric($texto) || $texto <= 0 || $texto >= 5000;
 
 
                 $errorFormu = $errorPrimera;
@@ -121,11 +114,19 @@
 
             if (isset($_POST["comparar"]) && !$errorFormu) {
 
-                $res=0;
-                for ($i=0; $i < strlen($texto_m) ; $i++) { 
-                    $res+=VALOR[$texto_m[$i]];
+                $res="";
+                $num=$texto;
+                while ($num > 0) {
+                    switch ($num) {
+                        case 'value':
+                            # code...
+                            break;
+                        
+                        default:
+                            # code...
+                            break;
+                    }
                 }
-
                 echo'<div style="background-color:lightgreen; border:solid; margin-top:10px; padding:5px;">';
 
                     echo'<h1 style="text-align:center">Arabes a romanos  - Resultado</h1>';
