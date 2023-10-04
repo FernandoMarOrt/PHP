@@ -19,6 +19,7 @@
     echo "<p><strong>Nombre: </strong>" .$_POST["nombre"]."</p>";
     echo "<p><strong>Apellidos: </strong>" .$_POST["apellido"]."</p>";
     echo "<p><strong>Contraseña: </strong>" .$_POST["contraseña"]."</p>";
+    echo "<p><strong>Sexo: </strong>" .$_POST["dni"]."</p>";
     echo "<p><strong>Sexo: </strong>" .$_POST["sexo"]."</p>";
     
     echo "<p><strong>Nacido en: </strong>" .$_POST["nacido"]."</p>";

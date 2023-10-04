@@ -1,5 +1,8 @@
 <?php
 
+    require "src/funciones.php";
+    
+
     if(isset($_POST["btborrar"])){
         
         unset($_POST); //SI ESTA CREADO EL $_POST LO DESTRUYE PARA QUE SE PUEDAN BORRAR LOS DATOS
@@ -11,6 +14,7 @@
         $error_nombre = $_POST["nombre"]==""; //mete en la variable error nombre , (si esta vacio mete true , y si esta relleno mete false)
         $error_apellido = $_POST["apellido"]=="";
         $error_contraseña = $_POST["contraseña"]=="";
+        $error_dni = $_POST["dni"]=="" || !dni_bien_escrito(strtoupper($_POST["dni"])) || !dni_valido(strtoupper($_POST["dni"]));
         $error_sexo = !isset($_POST["sexo"]);  //Esto te dice si en el sexo se ha marcado alguno (!isset) eso significa SI NO SE HA MARCADO
         $error_comentarios = $_POST["comentarios"]=="";
 
