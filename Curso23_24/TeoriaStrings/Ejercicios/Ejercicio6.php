@@ -95,11 +95,11 @@
 
                     echo '<p>Texto original';
 
-                    echo '<p>'.eliminar_acentos($_POST['primera']).'</p>';
+                    echo '<p>'.$_POST['primera'].'</p>';
 
                     echo '<p>Texto sin acentos';
 
-                    echo '<p> El numero '.$_POST['primera'].' se escribe en numeros en romanos</p>';
+                    echo '<p>'.eliminar_acentos($_POST['primera']).'</p>';
                     
 
                 echo'</div>';

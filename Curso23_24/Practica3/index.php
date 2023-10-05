@@ -18,7 +18,7 @@
         $error_sexo = !isset($_POST["sexo"]);  //Esto te dice si en el sexo se ha marcado alguno (!isset) eso significa SI NO SE HA MARCADO
         $error_comentarios = $_POST["comentarios"]=="";
 
-        $error_form= $error_nombre || $error_apellido || $error_contraseña || $error_sexo ||  $error_comentarios;
+        $error_form= $error_nombre || $error_apellido || $error_contraseña || $error_sexo ||  $error_comentarios ||  $error_dni;
 
         
     }
@@ -29,7 +29,7 @@
 
 
 
-    }else { //SI HAY ERRORES REENVIO PARA QUE LO ARREGLE //LINEA 47 EXPLICACION , SI PONGO ESO EN EL VALUE ME DEJA EL NOMBRE SI SE RELLENA BIEN YA PUESTO
+    }else { 
 
        require "vistas/vista_formulario.php";
 
