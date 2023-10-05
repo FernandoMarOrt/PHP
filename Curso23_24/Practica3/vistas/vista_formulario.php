@@ -112,7 +112,29 @@
             
                     <p>
                         <label for="foto">Incluir mi foto </label>
-                        <input type="file" name="foto" id="foto" accept="image/*">
+                        <input type="file" name="archivo" id="archivo" accept="image/*">
+
+                        <?php
+
+                            if(isset($_POST["btenviar"]) && $error_archivo) {
+
+                                if($_FILES["archivo"]["name"]!=""){ //Si he seleccionado algo
+
+                                    if($_FILES["archivo"]["error"]){ //Si da error
+
+                                        echo "<span class='error'>No se ha podido subir el archivo</<span>";
+
+                                    }elseif(!getimagesize($_FILES["archivo"]["tmp_name"])){ //SI no selecciona una imagen
+
+                                        echo "<span class='error'>No has seleccionado un archivo de tipo imagen</<span>";
+
+                                    }else{ //SI supera el peso
+
+                                        echo "<span class='error'>El archivo seleccionado supera los 500KB</<span>";
+                                    }
+                                }
+                            }
+                        ?>
                     </p>
             
                     <p>

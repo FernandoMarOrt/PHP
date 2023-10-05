@@ -16,9 +16,12 @@
         $error_contraseña = $_POST["contraseña"]=="";
         $error_dni = $_POST["dni"]=="" || !dni_bien_escrito(strtoupper($_POST["dni"])) || !dni_valido(strtoupper($_POST["dni"]));
         $error_sexo = !isset($_POST["sexo"]);  //Esto te dice si en el sexo se ha marcado alguno (!isset) eso significa SI NO SE HA MARCADO
+
+        $error_archivo=$_FILES["archivo"]["name"]=="" && $_FILES["archivo"]["error"] || !getimagesize($_FILES["archivo"]["tmp_name"]) || $_FILES["archivo"]["size"] > 500*1024; 
+        
         $error_comentarios = $_POST["comentarios"]=="";
 
-        $error_form= $error_nombre || $error_apellido || $error_contraseña || $error_sexo ||  $error_comentarios ||  $error_dni;
+        $error_form= $error_nombre || $error_apellido || $error_contraseña || $error_sexo ||  $error_comentarios ||  $error_dni || $error_archivo;
 
         
     }
