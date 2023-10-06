@@ -3,148 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ejercicio4</title>
+    <title>Conversor de Números Árabes a Romanos</title>
     <style>.error{color:red;}</style>
 </head>
 <body>
 
         <?php
 
-            const VALOR = array("M" => 1000,"D" => 500,"C" => 100,"L" => 50,"X" => 10,"V" => 5,"I" => 10);           
+            const VALOR = array("M" => 1000, "D" => 500, "C" => 100, "L" => 50, "X" => 10, "V" => 5, "I" => 1);
 
-            function letras_bien($texto){
-                $bien = true;
-
-                for ($i=0; $i < strlen($texto); $i++) { 
-                    if(!isset(VALOR[$texto[$i]])){
-                        $bien=false;
-                        break;
+            function arabes_a_romanos($numero) {
+                $resultado = '';
+                foreach (VALOR as $romano => $valor) {
+                    while ($numero >= $valor) {
+                        $resultado .= $romano;
+                        $numero -= $valor;
                     }
                 }
-                return $bien;
+                return $resultado;
             }
 
-            function orden_bueno($texto){
+            // Si el formulario se envía
+            if (isset($_POST["convertir"])) {
+                $numero = intval($_POST['arabe']);
+                $error = false;
 
-                $bien = true;
-
-                for ($i=0; $i < strlen($texto)-1; $i++) { 
-                    if(VALOR[$texto[$i]]<VALOR[$texto[$i+1]]){
-                        $bien=false;
-                        break;
-                    }
-                }
-                return $bien;
-
-            }
-
-            function repite_bien($texto){
-
-                $veces["I"]=4;
-                $veces["V"]=1;
-                $veces["X"]=4;
-                $veces["L"]=1;
-                $veces["C"]=4;
-                $veces["D"]=1;
-                $veces["M"]=4;
-
-                $bien = true;
-
-                for ($i=0; $i < strlen($texto); $i++) { 
-
-                    $veces[$texto[$i]]--;
-                    if($veces[$texto[$i]]==-1){
-                        $bien=false;
-                        break;
-                    }
+                if ($numero <= 0 || $numero >= 5000) {
+                    $error = true;
                 }
 
-                return $bien;
-
+                if (!$error) {
+                    $resultado_romano = arabes_a_romanos($numero);
+                }
             }
 
-
-            //Si los campos estan vacios o no contienen la longitud adecuada
-            if (isset($_POST["comparar"])) {
-
-
-                $texto=trim($_POST['primera']);
-                $errorPrimera = $_POST["primera"] == "" || !is_numeric($texto) || $texto <= 0 || $texto >= 5000;
-
-
-                $errorFormu = $errorPrimera;
-            }
-
-
-           
         ?>
 
-
-    <form action="Ejercicio4.php" method="post" enctype="multipart/form-data">
+    <form action="Ejercicio4.php" method="post">
 
         <div style="background-color:lightblue; border:solid; padding:5px;">
 
-            <h1 style="text-align:center">Arabes a romanos - Formulario</h1>
+            <h1 style="text-align:center">Árabes a Romanos - Formulario</h1>
 
-            <p>Dime un numero en numeros arabes y lo convertire en Romanos</p>
+            <p>Ingresa un número árabe (menor a 5000) y lo convertiré en número romano:</p>
             <p>
-                <label for="primera">Numero:</label>
-                <input type="text" name="primera" id="primera" value="<?php if(isset($_POST['primera'])) echo trim($_POST['primera'])?>"/>
+                <label for="arabe">Número Árabe:</label>
+                <input type="number" name="arabe" id="arabe" value="<?php if(isset($_POST['arabe'])) echo $_POST['arabe']; ?>"/>
                 <?php
-                    if (isset($_POST["comparar"]) && $errorFormu) {
-
-                        if($_POST["primera"]==''){
-                            echo "<span class='error'>*Campo vacio*</span>";
-                        }else {
-                            echo "<span class='error'>*No has escrito un numero romano correcto*</span>";
+                    if (isset($_POST["convertir"])) {
+                        if ($error) {
+                            echo "<span class='error'>* Ingresa un número árabe válido (menor a 5000).</span>";
                         }
-                        
                     }
                 ?>
             </p>
 
             <p>
-                <button type="submit" name="comparar">Convertir</button>
+                <button type="submit" name="convertir">Convertir</button>
             </p>
 
         </div>
 
-
         <?php
-
-            if (isset($_POST["comparar"]) && !$errorFormu) {
-
-                $res="";
-                $num=$texto;
-                while ($num > 0) {
-                    switch ($num) {
-                        case 'value':
-                            # code...
-                            break;
-                        
-                        default:
-                            # code...
-                            break;
-                    }
-                }
-                echo'<div style="background-color:lightgreen; border:solid; margin-top:10px; padding:5px;">';
-
-                    echo'<h1 style="text-align:center">Arabes a romanos  - Resultado</h1>';
-
-                    echo '<p> El numero '.$texto_m.' se escribe en cifras arabes: '.$res.'</p>';
-
-
-                echo'</div>';
-                
-                
+            if (isset($_POST["convertir"]) && !$error) {
+                echo '<div style="background-color:lightgreen; border:solid; margin-top:10px; padding:5px;">';
+                echo '<h1 style="text-align:center">>Árabes a Romanos - Resultado</h1>';
+                echo '<p>' . $numero . ' en números romanos es: ' . $resultado_romano . '</p>';
+                echo '</div>';
             }
-
         ?>
 
-        
-
-        
-        
     </form>
 </body>
 </html>
