@@ -10,21 +10,44 @@
 
         <?php
 
-            function limpiarFecha ($fecha){
+            /*function barrasBien($fecha){ ASI TAMBIEN SE PUEDE HACER LO DE BUENOS SEPARADORES DPS HAY QUE NEGARLO EN PLAN !barrasBien
 
-                $fechalimpia = trim(fecha)
+                if($fecha[2] == "/" && $fecha[5] == "/"){
+                    return true;
+                }else{
+                    return false;
+                }
 
-            }
+            }*/ 
 
+            
+            
             //Si los campos estan vacios o no contienen la longitud adecuada
             if (isset($_POST["calcular"])) {
 
+                $buenos_separadores = substr($_POST["fecha1"],2,1)=="/" && substr($_POST["fecha1"],5,1)=="/";
+
+                $array_numeros1 = explode("/",$_POST["fecha1"]); //Divido la fecha con separadores "/" y hago un array con ella
+
+                $numeros_buenos1 = is_numeric($array_numeros1[0]) &&  is_numeric($array_numeros1[1]) &&  is_numeric($array_numeros1[2]);
+
+                $fecha_valida1 = checkdate($array_numeros1[1],$array_numeros1[0],$array_numeros1[2]);
+
+
+                $buenos_separadores2 = substr($_POST["fecha2"],2,1)=="/" && substr($_POST["fecha2"],5,1)=="/";
                 
-                $errorFecha1 = $_POST["fecha1"] == "" || strlen(trim($_POST["primera"])) <3;
+                $array_numeros2 = explode("/",$_POST["fecha2"]); //Divido la fecha con separadores "/" y hago un array con ella
+
+                $numeros_buenos2 = is_numeric($array_numeros1[0]) &&  is_numeric($array_numeros1[1]) &&  is_numeric($array_numeros1[2]);
+
+                $fecha_valida2 = checkdate($array_numeros1[1],$array_numeros1[0],$array_numeros1[2]);
+
+
 
                 
+                $errorFecha1 = $_POST["fecha1"] == "" || !$buenos_separadores || strlen($_POST["fech1"])!=10 || !$numeros_buenos1 || !$fecha_valida;
 
-                $errorFecha2 = $_POST["fecha2"] == "" || strlen(trim($_POST["segunda"])) < 3;
+                $errorFecha2 = $_POST["fecha2"] == "" || !barrasBien($_POST["fecha2"]);
 
                 $errorFormu = $errorFecha1 || $errorFecha2;
             }
@@ -34,7 +57,7 @@
         ?>
 
 
-    <form action="Ejercicio1.php" method="post" enctype="multipart/form-data">
+    <form action="fechas1.php" method="post" enctype="multipart/form-data">
 
         <div style="background-color:lightblue; border:solid; padding:5px;">
 
@@ -75,18 +98,9 @@
 
                     echo'<h1 style="text-align:center">Fechas - Respuesta</h1>';
 
-                    if(substr(strtolower($_POST['primera']),-3) == substr(strtolower($_POST['segunda']),-3)){
+                    $flechinda = $_POST["fecha1"];
 
-                        echo '<p>'.$_POST['primera'].' y '.$_POST['segunda'].' riman</p>';
-
-                    }elseif(substr(strtolower($_POST['primera']),-3) == substr(strtolower($_POST['segunda']),-2)){
-                        
-                        echo '<p>'.$_POST['primera'].' y '.$_POST['segunda'].' riman un poco</p>';
-
-                    }else {
-
-                        echo '<p>'.$_POST['primera'].' y '.$_POST['segunda'].' no riman</p>';
-                    }
+                    echo "<p>".$flechinda[2]."</p>";
 
                 echo'</div>';
                 
