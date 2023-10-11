@@ -106,7 +106,7 @@
                     $dias_pasados=floor($dif_segundos/(60*60*24));
 
 
-                    echo "<p>La diferencia de las 2 fechas introducidas es de ".$dias_pasados."</p>";
+                    echo "<p>La diferencia de las 2 fechas introducidas es de ".$dias_pasados." dias</p>";
 
                 echo'</div>';
                 
