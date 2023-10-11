@@ -38,9 +38,9 @@
                 
                 $array_numeros2 = explode("/",$_POST["fecha2"]); //Divido la fecha con separadores "/" y hago un array con ella
 
-                $numeros_buenos2 = is_numeric($array_numeros1[0]) &&  is_numeric($array_numeros1[1]) &&  is_numeric($array_numeros1[2]);
+                $numeros_buenos2 = is_numeric($array_numeros2[0]) &&  is_numeric($array_numeros2[1]) &&  is_numeric($array_numeros2[2]);
 
-                $fecha_valida2 = checkdate($array_numeros1[1],$array_numeros1[0],$array_numeros1[2]);
+                $fecha_valida2 = checkdate($array_numeros2[1],$array_numeros2[0],$array_numeros2[2]);
 
 
 
