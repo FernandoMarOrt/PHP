@@ -9,45 +9,26 @@
 <body>
 
         <?php
-
-            /*function barrasBien($fecha){ ASI TAMBIEN SE PUEDE HACER LO DE BUENOS SEPARADORES DPS HAY QUE NEGARLO EN PLAN !barrasBien
-
-                if($fecha[2] == "/" && $fecha[5] == "/"){
-                    return true;
-                }else{
-                    return false;
-                }
-
-            }*/ 
-
             
-            
+            function buenos_separadores($fecha) {
+                return substr($fecha,2,1) =="/" && substr($fecha,5,1) =="/";
+            }
+
+            function numeros_buenos($fecha){
+                return is_numeric(substr($fecha,0,2)) &&  is_numeric(substr($fecha,3,2)) &&  is_numeric(substr($fecha,6,4));
+            }
+
+            function fecha_valida($fecha){  
+                return checkdate(substr($fecha,3,2),substr($fecha,0,2),substr($fecha,6,4));
+            }
+
             //Si los campos estan vacios o no contienen la longitud adecuada
             if (isset($_POST["calcular"])) {
 
-                $buenos_separadores = substr($_POST["fecha1"],2,1)=="/" && substr($_POST["fecha1"],5,1)=="/";
+                $errorFecha1 = $_POST["fecha1"] == "" || strlen($_POST["fecha1"])!=10 || !buenos_separadores($_POST["fecha1"]) || !numeros_buenos($_POST["fecha1"]) || !fecha_valida($_POST["fecha1"]);
 
-                $array_numeros1 = explode("/",$_POST["fecha1"]); //Divido la fecha con separadores "/" y hago un array con ella
+                $errorFecha2 = $_POST["fecha2"] == "" || strlen($_POST["fecha2"])!=10 || !buenos_separadores($_POST["fecha2"]) || !numeros_buenos($_POST["fecha2"]) || !fecha_valida($_POST["fecha2"]);
 
-                $numeros_buenos1 = is_numeric($array_numeros1[0]) &&  is_numeric($array_numeros1[1]) &&  is_numeric($array_numeros1[2]);
-
-                $fecha_valida1 = checkdate($array_numeros1[1],$array_numeros1[0],$array_numeros1[2]);
-
-
-                $buenos_separadores2 = substr($_POST["fecha2"],2,1)=="/" && substr($_POST["fecha2"],5,1)=="/";
-                
-                $array_numeros2 = explode("/",$_POST["fecha2"]); //Divido la fecha con separadores "/" y hago un array con ella
-
-                $numeros_buenos2 = is_numeric($array_numeros2[0]) &&  is_numeric($array_numeros2[1]) &&  is_numeric($array_numeros2[2]);
-
-                $fecha_valida2 = checkdate($array_numeros2[1],$array_numeros2[0],$array_numeros2[2]);
-
-
-
-                
-                $errorFecha1 = $_POST["fecha1"] == "" || !$buenos_separadores || strlen($_POST["fech1"])!=10 || !$numeros_buenos1 || !$fecha_valida;
-
-                $errorFecha2 = $_POST["fecha2"] == "" || !barrasBien($_POST["fecha2"]);
 
                 $errorFormu = $errorFecha1 || $errorFecha2;
             }
@@ -68,7 +49,16 @@
                 <input type="text" name="fecha1" id="fecha1" value="<?php if(isset($_POST['fecha1'])) echo $_POST['fecha1']?>"/>
                 <?php
                     if (isset($_POST["calcular"]) && $errorFecha1) {
-                        echo "<span class='error'>*Introduce una palabra de al menos 3 letras*</span>";
+
+                        if($_POST["fecha1"] ==""){
+
+                            echo "<span class='error'>*Campo vacio*</span>";
+
+                        }else {
+
+                            echo "<span class='error'>*Fecha no valida*</span>";
+                        }
+        
                     }
                 ?>
             </p>
@@ -77,7 +67,15 @@
                 <input type="text" name="fecha2" id="fecha2" value="<?php if(isset($_POST['fecha2'])) echo $_POST['fecha2']?>"/>
                 <?php
                     if (isset($_POST["calcular"]) && $errorFecha2) {
-                        echo "<span class='error'>*Introduce una palabra de al menos 3 letras*</span>";
+
+                        if($_POST["fecha2"] == ""){
+
+                            echo "<span class='error'>*Campo vacio*</span>";
+
+                        }else {
+
+                            echo "<span class='error'>*Fecha no valida*</span>";
+                        }
                     }
                 ?>
                 
@@ -98,9 +96,17 @@
 
                     echo'<h1 style="text-align:center">Fechas - Respuesta</h1>';
 
-                    $flechinda = $_POST["fecha1"];
+                    $array_fecha1=explode("/",$_POST["fecha1"]);
+                    $array_fecha2=explode("/",$_POST["fecha2"]);
 
-                    echo "<p>".$flechinda[2]."</p>";
+                    $tiempo1=mktime(0,0,0,$array_fecha1[1],$array_fecha1[0],$array_fecha1[2]);
+                    $tiempo2=mktime(0,0,0,$array_fecha2[1],$array_fecha2[0],$array_fecha2[2]);
+
+                    $dif_segundos=abs($tiempo1-$tiempo2);
+                    $dias_pasados=floor($dif_segundos/(60*60*24));
+
+
+                    echo "<p>La diferencia de las 2 fechas introducidas es de ".$dias_pasados."</p>";
 
                 echo'</div>';
                 
