@@ -44,6 +44,14 @@
         fwrite($fd1,PHP_EOL."No me vas a dejar escribir"); //PARA ESCRIBIR EN UN FICHERO
          
         fclose($fd1); //SIEMPRE AL FINAL CERRAR EL FICHERO
+
+
+        $todo_fichero=file_get_contents("prueba.txt"); //COGER EL CONTENIDO DEL FICHERO Y TRANSFORMARTELO EN STRING
+        echo "<pre>".$todo_fichero."</pre>"; //LO IMPRIMO //EL PRE ES PARA LOS SALTOS DE LINEA
+        echo nl2br($todo_fichero); //LO MISMO QUE EL PRE
+
+        $todo_fichero=file_get_contents("https://www.google.com");
+        echo $todo_fichero;
     ?>
 </body>
 </html>
