@@ -1,95 +1,69 @@
 <?php
+    if(isset($_POST["Contar"])){
 
-    if(isset($_POST["btEnviar"])){   
-
-        $array_nombre=explode(".",$_FILES["archivo"]["name"]);
-        $extension="";//PARA EXTENSION VACIA
-        if(count($array_nombre)>1){ //SI NO LLEVA EXTENSION
-
-            $extension=".".end($array_nombre);
-                        
-        }
-
-        $error_archivo=$_FILES["archivo"]["name"]=="" && $_FILES["archivo"]["error"] || !getimagesize($_FILES["archivo"]["tmp_name"]) || $_FILES["archivo"]["size"] > 2500*1024 || $extension != ".txt"; 
-        
+        $error_formu = $_FILES["fichero"]["name"] == "" || $_FILES["fichero"]["error"] || $_FILES["fichero"]["type"] != "text/plain" || $_FILES["fichero"]["size"]> 2500*1024 ;
     }
-
-    if(isset($_POST["btEnviar"]) && !$error_archivo){
-        ?>
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Ejercicio4</title>
-                <style>.tam_imag{width:35%}</style>
-            </head>
-            <body>
-                <?php
-                    echo "<p>Funciona</p>";
-                ?>
-                
-            </body>
-            </html>
-
-        <?php
-    } else{
-
 
 ?>
 
-        <!DOCTYPE html>
-        <html lang="es">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Subir archivos al servidor</title>
-            <style>
-                .error{color:red};
-            </style>
-        </head>
-        <body>
-            
-            <h1>Teoria subir ficheros al servidor</h1>
-            <form action="Ejercicio4.php" method="post" enctype="multipart/form-data">
-                <p>
-                    <label for="archivo">Selecciona un archivo imagen (Max 2.5MB):</label>
-                    <input type="file" name="archivo" id="archivo" accept="image/*">
-                    <?php
 
-                        if(isset($_POST["btEnviar"]) && $error_archivo) {
+<!DOCTYPE html>
+<html lang="es">
 
-                            if($_FILES["archivo"]["name"]!=""){ //Si he seleccionado algo
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subir archivos al servidor</title>
+    <style>.error {color: red};</style>
+</head>
 
-                                if($_FILES["archivo"]["error"]){ //Si da error
- 
-                                    echo "<span class='error'>No se ha podido subir el archivo</<span>";
-    
-                                }elseif(!getimagesize($_FILES["archivo"]["tmp_name"])){ //SI no selecciona una imagen
-    
-                                    echo "<span class='error'>No has seleccionado un archivo de tipo imagen</<span>";
-    
-                                }else{ //SI supera el peso
-    
-                                    echo "<span class='error'>El archivo seleccionado supera los 500KB</<span>";
-                                }
-                            }
+<body>
 
-                           
+    <h1>Teoria subir ficheros al servidor</h1>
+    <form action="Ejercicio4.php" method="post" enctype="multipart/form-data">
+        <p>
+            <label for="fichero">Selecciona un fichero de texto para contar sus palabras (Max 2.5MB):</label>
+            <input type="file" name="fichero" id="fichero" accept=".txt">
+            <?php
+                if(isset($_POST["Contar"]) && $error_formu) {
 
-                        }
+                    if($_FILES["fichero"]["name"] ==""){
 
+                        echo "<span class='error'>*</span>";
 
-                    ?>
-                </p>
+                    }elseif($_FILES["fichero"]["error"]){
+
+                        echo "<span class='error'>Error: no se ha podido subir el fichero al servidor</span>";
+
+                    }elseif($_FILES["fichero"]["type"] !="text/plain"){
+
+                        echo "<span class='error'>Error: no has seleccionado un fichero .txt</span>";
+
+                    }else{
+
+                        echo "<span class='error'>Error: el tamaño del fichero supera los 2.5MB</span>";
+                    }
+                }
+
+            ?>
+
+        </p>
 
 
-                <p>
-                    <button type="submit" name="btEnviar">Enviar</button>
-                </p>
-            </form>
-        </body>
-        </html>
+        <p>
+            <button type="submit" name="Contar">Contar</button>
+        </p>
+    </form>
     <?php
-    }
+
+        if(isset($_POST["Contar"]) && !$error_formu) {
+
+            $contenido_fichero=file_get_contents($_FILES["fichero"]["tmp_name"]);
+
+            echo "<h3>El numero de palabras que contiene el archivo selecciona es de: ".str_word_count($contenido_fichero)."</h3>";
+        }
+
     ?>
+</body>
+
+</html>
