@@ -42,7 +42,8 @@
                 }
 
             }
-            if($contador2>1){
+            if($contador2>1
+            ){
                 echo "<p>Hay uno o varios caracteres repetidos</p>";
             }else{
                 echo "<p>No hay caracteres repetidos</p>";
