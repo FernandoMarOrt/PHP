@@ -16,7 +16,7 @@
     if(isset($_POST["btEnviar"]) && !$error_archivo){
 
         //echo "Contesto con la info del archivo subido";
-        ?>
+    ?>
             <!DOCTYPE html>
             <html lang="en">
             <head>

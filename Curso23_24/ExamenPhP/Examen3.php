@@ -5,24 +5,53 @@
         $error_formu=$_POST["texto"] =="";
     }
 
-    function mi_explode($texto){
+    function mi_explode($sep,$texto){
 
-        $separador = $_POST["sep"];
+        $aux=[];
+        $l_texto=strlen($texto);
 
-        while (isset($texto[$cont])) {
-            $cont++;
-            if(isset($texto[$cont]) == $separador){
-                $cont2++;
+        $i=0;
+        while ($i<$l_texto && $texto[$i]==$sep) {
 
-                if($texto[$cont+1]!=$separador){
-                    $cont2+1;
-                }
-            }
+            $i++;
         }
 
-        return $cont2;
+            if($i<$l_texto){
+                
+                $j=0;
+                $aux[$j]=$texto[$i];
+
+                for ($i=$i+1;$i<$l_texto;$i++) { 
+
+                    if($texto[$i]!=$sep){
+
+                        $aux[$j].=$texto[$i]; //.= para concatenar
+
+                    }else{
+
+                        while ($i<$l_texto && $texto[$i]==$sep) {
+
+                            $i++;
+                        }
+                        if($i<$l_texto){
+
+                            $j++;
+                            $aux[$j]=$texto[$i];
+                        }
+                    }
+
+                    }
+        
+                }
+
+                return $aux;
     }
 
+
+        
+
+        
+    
 ?>
 
 
@@ -41,10 +70,10 @@
     <p>
         <label for="sep">Elija Separador</label>
         <select name="sep" id="sep">
-            <option value=",">, (coma)</option>
-            <option value=";">; (punto y coma)</option>
-            <option value=" "> (espacio)</option>
-            <option value=":">: (dos puntos)</option>
+            <option <?php  if(isset($_POST["contar"]) && $_POST["sep"] == ",") echo "selected"; ?> value=",">, (coma)</option>
+            <option <?php  if(isset($_POST["contar"]) && $_POST["sep"] == ";") echo "selected"; ?> value=";">; (punto y coma)</option>
+            <option <?php  if(isset($_POST["contar"]) && $_POST["sep"] == " ") echo "selected"; ?> value=" "> (espacio)</option>
+            <option <?php  if(isset($_POST["contar"]) && $_POST["sep"] == ":") echo "selected"; ?> value=":">: (dos puntos)</option>
         </select>
     </p>
 
@@ -66,7 +95,7 @@
 
     <?php
         if(isset($_POST["contar"]) && !$error_formu){
-            echo "<p>El texto contiene: ".mi_explode($_POST["texto"])." palabras</p";
+            echo "<p>El texto contiene: ".count(mi_explode($_POST["sep"],$_POST["texto"]))." palabras separados por: ".$_POST["sep"]."</p";
         }
 
     ?>
