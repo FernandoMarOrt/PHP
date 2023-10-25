@@ -21,6 +21,7 @@
             echo "<p>La ciudad con el indice ".$indice." tiene el nombre de: ".$valores."</p>";
         }
 
+        
     ?>
     
 </body>
