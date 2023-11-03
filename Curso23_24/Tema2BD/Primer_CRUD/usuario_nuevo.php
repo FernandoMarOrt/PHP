@@ -8,6 +8,9 @@
             $error_clave=$_POST["clave"]=="";
             $error_email=$_POST["email"]== "" || !filter_var($_POST["email"],FILTER_VALIDATE_EMAIL);
             $error_form= $error_nombre || $error_usuario ||  $error_clave || $error_email; 
+            if(!$error_form){
+                
+            }
         }
 
 
