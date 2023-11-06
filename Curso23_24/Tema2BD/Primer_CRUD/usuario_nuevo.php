@@ -112,9 +112,6 @@
             if(!$error_form){
 
 
-                
-
-
                 try {
         
                     $consulta="insert into usuarios (nombre,usuario,clave,email) values ('".$_POST["nombre"]."','".$_POST["usuario"]."','".md5($_POST["clave"])."','".$_POST["email"]."')";
