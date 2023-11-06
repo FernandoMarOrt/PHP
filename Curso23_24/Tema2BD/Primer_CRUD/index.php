@@ -71,6 +71,7 @@
         echo "<p><button type='submit' name='btnNuevoUsuario'>Insertar nuevo usuario</button></p>";
         echo "</form>";
 
+        mysqli_free_result($resultado); //LIBERO LA CONSULTA
         mysqli_close($conexion);
     ?>
     
