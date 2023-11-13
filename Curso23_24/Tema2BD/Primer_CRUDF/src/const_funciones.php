@@ -34,4 +34,23 @@ function repetido($conexion,$tabla,$columna,$valor){
     return $respuesta;
 
 }
+
+function repetido_editando($conexion,$tabla,$columna,$valor,$columna_clave,$valor_clave){
+
+    try {
+    
+        $consulta="select * from ".$tabla." where ".$columna."='".$valor."'";
+        $resultado=mysqli_query($conexion,$consulta);
+        $respuesta=mysqli_num_rows($resultado)>0;
+        mysqli_free_result($resultado);
+        
+    } catch (Exception $e) {
+
+        mysqli_close($conexion);
+        $respuesta=(error_page("Practica 1º CRUD","<h1>Practica 1º CRUD</h1><p>No ha podido hacer la consulta: ".$e->getMessage()."</p></body></html>"));
+        
+    }
+    return $respuesta;
+
+}
 ?>

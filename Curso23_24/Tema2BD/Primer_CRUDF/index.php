@@ -1,6 +1,70 @@
 <?php
 require "src/const_funciones.php";
 
+if (isset($_POST["continuarEdit"])) {
+    //ERROR NOMBRE
+    $error_nombre = $_POST["nombre"] == "" || strlen($_POST["nombre"]) > 30;
+
+        //ERROR CLAVE
+        $error_clave=strlen($_POST["clave"]) > 15;
+
+    //ERROR USUARIO
+    $error_usuario = $_POST["usuario"] == "" || strlen($_POST["usuario"]) > 20;
+
+    if (!$error_usuario) {
+
+        try {
+
+            $conexion = mysqli_connect("localhost", "jose", "josefa", "bd_foro");
+            mysqli_set_charset($conexion, "utf8");
+
+        } catch (Exception $e) {
+
+            //LE PASO LOS 2 PARAMETROS TITLE Y BODY
+            die(error_page("Practica 1º CRUD", "<h1>Practica 1º CRUD</h1><p>No ha podido conectarse a la base de datos: " . $e->getMessage() . "</p></body></html>"));
+        
+        }
+
+        $error_email=repetido_editando($conexion, "usuarios", "email", $_POST["email"],"id_usuario",$_POST["btnEditar"]);
+        $error_usuario = repetido_editando($conexion, "usuarios", "usuario", $_POST["usuario"],"id_usuario",$_POST["btnEditar"]);
+        if (is_string($error_usuario)) {
+            die($error_usuario);
+        }
+
+        $error_form= $error_nombre || $error_usuario ||  $error_clave || $error_email; 
+
+        if(!$error_form){
+
+
+            try {
+    
+                if($_POST["clave"]==""){
+
+                    $consulta="update usuarios set nombre='".$_POST["nombre"]."', usuario='".$_POST["usuario"]."', email='".$_POST["email"]."' where id_usuario='".$_POST["continuarEdit"]."'";
+                }else{
+
+                    $consulta="update usuarios set nombre='".$_POST["nombre"]."', usuario='".$_POST["usuario"]."', clave='".md5($_POST["clave"])."', email='".$_POST["email"]."' where id_usuario='".$_POST["continuarEdit"]."'";
+                }
+
+                $consulta="insert into usuarios (nombre,usuario,clave,email) values ('".$_POST["nombre"]."','".$_POST["usuario"]."','".md5($_POST["clave"])."','".$_POST["email"]."')";
+                mysqli_query($conexion,$consulta); //COMO ES UN INSERT NO SE RECOGEN EN LA VARIABLE $RESULTADO
+                
+            } catch (Exception $e) {
+        
+                mysqli_close($conexion);
+                die(error_page("Practica 1º CRUD","<h1>Practica 1º CRUD</h1><p>No ha podido hacer la consulta: ".$e->getMessage()."</p></body></html>"));
+            }
+
+            mysqli_close($conexion);
+
+            //inserto en BD y salto a index"
+            header("Location:index.php");
+            exit;
+        }
+
+    }
+}
+
 if (isset($_POST["btnContBorrar"])) {
 
     try {
@@ -148,15 +212,18 @@ if (isset($_POST["btnContBorrar"])) {
 
     } elseif (isset($_POST["btnBorrar"])) {
 
-        echo "<p>Se dispone usted a borrar al usuario <strong>" . $_POST["nombre_usuario"] . "</strong></p>";
-        echo "<form action='index.php' method='post'>";
-        echo "<p><button type='submit' name='btnContBorrar' value='" . $_POST["btnBorrar"] . "'>Continuar</button> ";
-        echo "<button type='submit'>Atras</button></p>";
-        echo "</form>";
+        require "vistas/vista_conf_borrar.php";
 
 
         //EDITAR AL USUARIO
-    } elseif (isset($_POST["btnEditar"])) {
+    } elseif (isset($_POST["btnEditar"]) || isset($_POST["continuarEdit"])) {
+
+
+        if (isset($_POST["btnEditar"])) {
+            $id_usuario = $_POST["btnEditar"];
+        } else {
+            $id_usuario = $_POST["btnEditar"];
+        }
 
         try {
 
@@ -169,6 +236,22 @@ if (isset($_POST["btnContBorrar"])) {
         }
 
         if (mysqli_num_rows($resultado) > 0) {
+
+
+            if (isset($_POST["btnEditar"])) {
+
+                $datos_usuario = mysqli_fetch_assoc($resultado);
+                $nombre = $datos_usuario["nombre"];
+                $usuario = $datos_usuario["usuario"];
+                //$clave=$datos_usuario["clave"];
+                $email = $datos_usuario["email"];
+            } else {
+                $nombre = $_POST["nombre"];
+                $usuario = $_POST["usuario"];
+                //$clave=$datos_usuario["clave"];
+                $email = $_POST["email"];
+            }
+            mysqli_free_result($resultado);
         } else {
             $mensaje_error_usuario = "<p>El usuario que esta intentando editar ya no existe en la bd</p>";
         }
@@ -179,19 +262,16 @@ if (isset($_POST["btnContBorrar"])) {
 
         $datos_usuario = mysqli_fetch_assoc($resultado);
 
-
-        
-
     ?>
 
-        <h1>Editando el usuario : <?php echo $_POST["btnEditar"] ?></h1>
-        <form action="usuario_nuevo.php" method="post" enctype="multipart/form-data">
+        <h2>Editando el usuario : <?php echo $id_usuario ?></h2>
+        <form action="index.php" method="post" enctype="multipart/form-data">
             <p>
                 <label for="nombre">Nombre:</label>
-                <input type="text" name="nombre" id="nombre" maxlength="30" value="<?php echo $datos_usuario["nombre"] ?>">
+                <input type="text" name="nombre" id="nombre" maxlength="30" value="<?php echo $nombre; ?>">
 
                 <?php
-                if (isset($_POST["continuar"]) && $error_nombre) {
+                if (isset($_POST["continuarEdit"]) && $error_nombre) {
                     if ($_POST["nombre"] == "") {
                         echo "<span class='error'> Campo vacio</span>";
                     } else {
@@ -205,20 +285,20 @@ if (isset($_POST["btnContBorrar"])) {
 
             <p>
                 <label for="usuario">Usuario:</label>
-                <input type="text" name="usuario" id="usuario" maxlength="20" value="<?php echo $datos_usuario["usuario"] ?>">
+                <input type="text" name="usuario" id="usuario" maxlength="20" value="<?php echo $usuario; ?>">
 
                 <?php
-                if(isset($_POST["continuar"]) && $error_usuario){
-                    if($_POST["usuario"] == ""){
+                if (isset($_POST["continuarEdit"]) && $error_usuario) {
+                    if ($_POST["usuario"] == "") {
                         echo "<span class='error'> Campo vacio</span>";
-                    }elseif($_POST["usuario"] > 20){
+                    } elseif ($_POST["usuario"] > 20) {
                         echo "<span class='error'> Has tecleado mas de 20 caracteres</span>";
-                    }else{
+                    } else {
                         echo "<span class='error'>Usuario repetido</span>";
                     }
                 }
 
-            ?>
+                ?>
             </p>
 
 
@@ -226,44 +306,42 @@ if (isset($_POST["btnContBorrar"])) {
                 <label for="clave">Contraseña:</label>
                 <input type="text" name="clave" maxlength="15" id="clave" placeholder="Editar contraseña">
                 <?php
-                if(isset($_POST["continuar"]) && $error_clave){
-                    if($_POST["clave"] == ""){
+                if (isset($_POST["continuarEdit"]) && $error_clave) {
+                    if ($_POST["clave"] == "") {
                         echo "<span class='error'> Campo vacio</span>";
-                    }else{
+                    } else {
                         echo "<span class='error'> Has tecleado mas de 15 caracteres</span>";
                     }
                 }
 
-            ?>
+                ?>
             </p>
 
 
             <p>
                 <label for="email">Email:</label>
-                <input type="text" name="email" id="email" maxlength="50" value="<?php echo $datos_usuario["email"] ?>">
+                <input type="text" name="email" id="email" maxlength="50" value="<?php echo $email ?>">
                 <?php
-                if(isset($_POST["continuar"]) && $error_email){
-                    if($_POST["email"] == ""){
+                if (isset($_POST["continuarEdit"]) && $error_email) {
+                    if ($_POST["email"] == "") {
                         echo "<span class='error'> Campo vacio</span>";
-                    }elseif(strlen($_POST["email"])>50){
+                    } elseif (strlen($_POST["email"]) > 50) {
 
                         echo "<span class='error'> Has tecleado mas de 50 caracteres</span>";
-
-                    }elseif(!filter_var($_POST["email"],FILTER_VALIDATE_EMAIL)){
+                    } elseif (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) {
 
                         echo "<span class='error'>Email sintaxticamente incorrecto</span>";
-
-                    }else{
+                    } else {
                         echo "<span class='error'>Email repetido</span>";
                     }
                 }
 
-            ?>
+                ?>
             </p>
 
 
             <p>
-                <button type="submit" name="continuar">Continuar</button>
+                <button type="submit" name="continuarEdit" value="<?php echo $id_usuario; ?>">Continuar</button>
                 <button type="submit" name="volver">Atras</button>
             </p>
 
@@ -271,7 +349,7 @@ if (isset($_POST["btnContBorrar"])) {
 
     <?php
 
-     
+
     } else {
         echo "<form action='usuario_nuevo.php' method='post'>";
         echo "<p><button type='submit' name='btnNuevoUsuario'>Insertar nuevo usuario</button></p>";
