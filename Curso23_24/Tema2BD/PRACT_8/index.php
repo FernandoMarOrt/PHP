@@ -116,6 +116,15 @@
             <input type="text" name="DNI" id="DNI" maxlength="50" placeholder="DNI. 11223344Z" value="<?php  if(isset($_POST["DNI"])) echo $_POST["DNI"];?>">
         
         </p>
+
+        <p>
+
+
+
+
+        </p>
+
+        
         <p>
             <button type="submit" name="btnContInsertar">Guardar Cambios</button> 
             <button type="submit">Atras</button> 
