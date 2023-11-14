@@ -16,7 +16,7 @@ if(isset($_POST["btnContEditar"]))
         {
             die(error_page("Práctica 1º CRUD","<h1>Práctica 1º CRUD</h1><p>No he podido conectarse a la base de batos: ".$e->getMessage()."</p>"));
         }
-        $error_usuario=repetido_editando($conexion,"usuarios","usuario",$_POST["usuario"],"id_usuario",$_POST["btnContEditar"]);
+        $error_usuario=repetido($conexion,"usuarios","usuario",$_POST["usuario"],"id_usuario",$_POST["btnContEditar"]);
             
          if(is_string($error_usuario))
             die($error_usuario);
@@ -36,7 +36,7 @@ if(isset($_POST["btnContEditar"]))
                 die(error_page("Práctica 1º CRUD","<h1>Práctica 1º CRUD</h1><p>No he podido conectarse a la base de batos: ".$e->getMessage()."</p>"));
             }
         }
-        $error_email=repetido_editando($conexion,"usuarios","email",$_POST["email"],"id_usuario",$_POST["btnContEditar"]);
+        $error_email=repetido($conexion,"usuarios","email",$_POST["email"],"id_usuario",$_POST["btnContEditar"]);
         
         if(is_string($error_email))
             die($error_email);
