@@ -4,13 +4,13 @@
 define("SERVIDOR_BD","localhost");
 define("USUARIO_BD","jose");
 define("CLAVE_BD","josefa");
-define("NOMBRE_BD","bd_foro");
+define("NOMBRE_BD","bd_cv");
 
 
 function error_page($title,$body)
 {
     $page='<!DOCTYPE html>
-    <html lang="en">
+    <html lang="es">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -38,10 +38,27 @@ function repetido($conexion,$tabla,$columna,$valor,$columna_clave=null,$valor_cl
     catch(Exception $e)
     {
         mysqli_close($conexion);
-        $respuesta=error_page("Práctica 1º CRUD","<h1>Práctica 1º CRUD</h1><p>No se ha podido hacer la consulta: ".$e->getMessage()."</p>");
+        $respuesta=$e->getMessage();
     }
     return $respuesta;
 }
+
+function LetraNI($dni)
+    {
+        return substr("TRWAGMYFPDXBNJZSQVHLCKEO", $dni % 23, 1);
+    }
+    function dni_bien_escrito($texto)
+    {
+        $bien_escrito = strlen($texto) == 9  && is_numeric(substr($texto, 0, 8)) && substr($texto, -1) >= "A" && substr($texto, -1) <= "Z";
+        return $bien_escrito;
+    }
+    function dni_valido($texto)
+    {
+        $numero = substr($texto, 0, 8);
+        $letra = substr($texto, -1);
+        $valido = LetraNI($numero) == $letra;
+        return $valido;
+    }
 
 
 ?>
