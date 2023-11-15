@@ -33,3 +33,4 @@ if (mysqli_num_rows($resultado) > 0) {
 echo "<form action='index.php' method='post'>";
 echo "<p><button type='submit'>Volver</button></p>";
 echo "</form>";
+?>

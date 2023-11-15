@@ -29,3 +29,4 @@ while ($tupla = mysqli_fetch_assoc($resultado)) {
 }
 echo "</table>";
 mysqli_free_result($resultado);
+?>
