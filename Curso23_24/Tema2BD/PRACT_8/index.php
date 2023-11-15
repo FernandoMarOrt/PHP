@@ -26,6 +26,55 @@ if (isset($_POST["btnContBorrar"])) {
     header("Location:index.php");
     exit();
 }
+
+
+
+
+if (isset($_POST["btnContInsertar"])) {
+    $error_nombre = $_POST["nombre"] == "" || strlen($_POST["nombre"]) > 30;
+    $error_usuario = $_POST["usuario"] == "" || strlen($_POST["usuario"]) > 20;
+    if (!$error_usuario) {
+        try {
+            $conexion = mysqli_connect("localhost", "jose", "josefa", "bd_foro");
+            mysqli_set_charset($conexion, "utf8");
+        } catch (Exception $e) {
+            die(error_page("Práctica 1º CRUD", "<h1>Práctica 1º CRUD</h1><p>No he podido conectarse a la base de batos: " . $e->getMessage() . "</p>"));
+        }
+
+        $error_usuario = repetido($conexion, "usuarios", "usuario", $_POST["usuario"]);
+
+        if (is_string($error_usuario))
+            die($error_usuario);
+    }
+
+
+
+
+    $error_clave = $_POST["clave"] == "" || strlen($_POST["clave"]) > 15;
+    $error_dni = !dni_valido($_POST["dni"]);
+    $error_sexo = $_POST["sexo"] = "";
+
+    $error_form = $error_nombre || $error_usuario || $error_clave || $error_dni || $error_sexo;
+
+    if (!$error_form) {
+        try {
+            $consulta = "insert into usuarios (nombre,usuario,clave,email) values ('" . $_POST["nombre"] . "','" . $_POST["usuario"] . "','" . md5($_POST["clave"]) . "','" . $_POST["email"] . "')";
+            mysqli_query($conexion, $consulta);
+        } catch (Exception $e) {
+            mysqli_close($conexion);
+            die(error_page("Práctica 1º CRUD", "<h1>Práctica 1º CRUD</h1><p>No se ha podido hacer la consulta: " . $e->getMessage() . "</p>"));
+        }
+
+        mysqli_close($conexion);
+
+        header("Location:index.php");
+        exit;
+    }
+
+
+    if (isset($conexion))
+        mysqli_close($conexion);
+}
 ?>
 
 <!DOCTYPE html>
@@ -173,11 +222,9 @@ if (isset($_POST["btnContBorrar"])) {
 
     <?php
 
-       
     }
 
     require "vistas/vistas_tablaP.php";
-
 
     ?>
 </body>
