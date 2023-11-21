@@ -23,42 +23,42 @@ function error_page($title,$body)
 
 function repetido($conexion,$tabla,$columna,$valor,$columna_clave=null,$valor_clave=null)
 {
-
-    try{
-        if(isset($columna_clave)){
+    try
+    {
+        if(isset($columna_clave))
             $consulta="select * from ".$tabla." where ".$columna."='".$valor."' AND ".$columna_clave."<>'".$valor_clave."'";
-        }else{
+        else
             $consulta="select * from ".$tabla." where ".$columna."='".$valor."'";
-        }
-        
+
         $resultado=mysqli_query($conexion, $consulta);
         $respuesta=mysqli_num_rows($resultado)>0;
         mysqli_free_result($resultado);
     }
     catch(Exception $e)
     {
-        mysqli_close($conexion);
         $respuesta=$e->getMessage();
     }
     return $respuesta;
 }
 
-function LetraNI($dni)
-    {
-        return substr("TRWAGMYFPDXBNJZSQVHLCKEO", $dni % 23, 1);
-    }
-    function dni_bien_escrito($texto)
-    {
-        $bien_escrito = strlen($texto) == 9  && is_numeric(substr($texto, 0, 8)) && substr($texto, -1) >= "A" && substr($texto, -1) <= "Z";
-        return $bien_escrito;
-    }
-    function dni_valido($texto)
-    {
-        $numero = substr($texto, 0, 8);
-        $letra = substr($texto, -1);
-        $valido = LetraNI($numero) == $letra;
-        return $valido;
-    }
+function LetraNIF($dni) 
+{  
+    return substr("TRWAGMYFPDXBNJZSQVHLCKEO", $dni % 23, 1); 
+}
 
+function dni_bien_escrito($texto)
+{
+    return strlen($texto)==9 && is_numeric(substr($texto,0,8)) && substr($texto,-1)>="A" && substr($texto,-1)<="Z";
+}
+
+function dni_valido($texto)
+{
+    return LetraNIF(substr($texto,0,8))==substr($texto,-1);
+}
+
+function tiene_extension($nombre)
+{
+    return explode(".",$nombre);
+}
 
 ?>
