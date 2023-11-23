@@ -18,8 +18,9 @@
     }
     ?>
     <p><a href="recibido.php">Ver datos</a></p>
-        <form href="recibido.php" method="post">
-            <button type="submit" name="Enviar">Enviar datos sesion</button>
+
+        <form action="recibido.php" method="post">
+            <button type="submit" name="btnBorrarSesion">Borrar datos sesion</button>
         </form>
 </body>
 </html>
