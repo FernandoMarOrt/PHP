@@ -80,6 +80,7 @@ if(isset($_POST["btnContBorrar"]))
     }
     catch(Exception $e)
     {
+        session_destroy();
         die(error_page("Práctica 1º CRUD","<h1>Listado de los usuarios</h1><p>No ha podido conectarse a la base de batos: ".$e->getMessage()."</p>"));
     }
 

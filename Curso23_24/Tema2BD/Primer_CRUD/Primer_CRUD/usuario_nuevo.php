@@ -1,4 +1,5 @@
 <?php
+session_name("primercrud");
 session_start();
 require "src/ctes_funciones.php";
 

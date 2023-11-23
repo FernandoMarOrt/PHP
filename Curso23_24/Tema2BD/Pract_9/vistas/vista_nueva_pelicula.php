@@ -30,67 +30,52 @@
             ?>
         </p>
         <p>
-            <label for="clave">Contraseña</label><br/>
-            <input type="password" name="clave" id="clave" maxlength="15"/>
+            <label for="sinopsis">Sinopsis de la pelicula:</label><br/>
+            <textarea type="text" name="sinopsis" id="sinopsis" rows="15" cols="40"><?php if(isset($_POST["sinopsis"])) echo $_POST["sinopsis"];?></textarea>
             <?php
-            if(isset($_POST["btnContNueva"])&& $error_clave)
+            if(isset($_POST["btnContNueva"]) && $error_sinopsis)
             {
-                if($_POST["clave"]=="")
+                if($_POST["sinopsis"]=="")
                     echo "<span class='error'> Campo vacío </span>";
-                else
-                    echo "<span class='error'> Has tecleado más de 15 caracteres</span>";
             }
             ?>
         </p>
         <p>
-            <label for="dni">DNI:</label><br/>
-            <input type="text" placeholder="DNI: 11223344Z" maxlength="9" name="dni" id="dni" value="<?php if(isset($_POST["dni"])) echo $_POST["dni"];?>"/>
+            <label for="tematica">Tematica de la pelicula:</label><br/>
+            <input type="text" maxlength="15" name="tematica" id="tematica" value="<?php if(isset($_POST["tematica"])) echo $_POST["tematica"];?>"/>
             <?php
-            if(isset($_POST["btnContNueva"])&& $error_dni)
-            {
-                if($_POST["dni"]=="")
-                    echo "<span class='error'> Campo vacío </span>";
-                elseif(!dni_bien_escrito($dni_may))
-                    echo "<span class='error'> DNI no está bien escrito </span>";
-                elseif(!dni_valido($dni_may))
-                    echo "<span class='error'> DNI no válido </span>";
-                else
-                    echo "<span class='error'> DNI repetido </span>";
-            }
+             if(isset($_POST["btnContNueva"])&& $error_tematica)
+             {
+                 if($_POST["tematica"]=="")
+                     echo "<span class='error'> Campo vacío </span>";
+                 elseif(strlen($_POST["tematica"])>15)
+                     echo "<span class='error'> Has tecleado más de 15 caracteres</span>";
+             }
                 
             ?>
         </p>
 
-        <p>Sexo
-        <?php
-            if(isset($_POST["btnContNueva"])&& $error_sexo)
-                echo "<span class='error'> Debes seleccionar un Sexo </span>";
-            ?>
-            <br/>
-            <input type="radio" <?php if(isset($_POST["sexo"]) && $_POST["sexo"]=="hombre") echo "checked";?> name="sexo" id="hombre" value="hombre"/><label for="hombre">Hombre</label><br/>
-            <input type="radio" <?php if(isset($_POST["sexo"]) && $_POST["sexo"]=="mujer") echo "checked";?> name="sexo" id="mujer" value="mujer"/><label for="mujer">Mujer</label>
-        </p>
         <p>
-            <label for="foto">Incluir mi foto (Max. 500KB)</label>
-            <input type="file" name="foto" id="foto" accept="image/*"/>
+            <label for="caratula">Añadir caratula de la pelicula</label>
+            <input type="file" name="caratula" id="caratula" accept="image/*"/>
             <?php
-            if(isset($_POST["btnContNueva"]) && $error_foto)
+            if(isset($_POST["btnContNueva"]) && $error_caratula)
             {
-                if($_FILES["foto"]["error"])
+                if($_FILES["caratula"]["error"])
                     echo "<span class='error'> No se ha podido subir el archivo al servidor</span>";
-                elseif(!getimagesize( $_FILES["foto"]["tmp_name"]))
+                elseif(!getimagesize( $_FILES["caratula"]["tmp_name"]))
                     echo "<span class='error'> No has seleccionado un archivo de tipo imagen</span>";
-                elseif(!tiene_extension($_FILES["foto"]["name"]))
+                elseif(!tiene_extension($_FILES["caratula"]["name"]))
                     echo "<span class='error'> Has seleccionado un archivo imagen sin extensión</span>";
                 else
-                    echo "<span class='error'> El archivo seleccionado supera los 500KB</span>";
+                    echo "<span class='error'> El archivo seleccionado supera los 500KB</span>";/*QUITAR ESTO SI SALE ERROR*/ 
             }
             ?>
         </p>
         
         
         <p>
-            <button type="submit" name="btnContNueva">Guardar Cambios</button>
+            <button type="submit" name="btnContNueva">Crear Nueva Pelicula</button>
             <button type="submit" >Atras</button>
         </p>
         
