@@ -1,4 +1,5 @@
 <?php
+session_start();
 require "src/ctes_funciones.php";
 
 if(isset($_POST["btnContEditar"]))
@@ -63,6 +64,7 @@ if(isset($_POST["btnContEditar"]))
         
         mysqli_close($conexion);
 
+        $_SESSION["mensaje"]="El usuario ha sido actualizado con exito";
         header("Location:index.php");
         exit;
         
@@ -91,6 +93,8 @@ if(isset($_POST["btnContBorrar"]))
         die(error_page("Práctica 1º CRUD","<h1>Listado de los usuarios</h1><p>No ha podido conectarse a la base de batos: ".$e->getMessage()."</p>"));
     }
 
+    $_SESSION["mensaje"]="El usuario ha sido borrado con exito";
+
     mysqli_close($conexion);
     header("Location:index.php");
     exit();
@@ -110,6 +114,7 @@ if(isset($_POST["btnContBorrar"]))
         table img{width:50px;}
         .enlace{border:none;background:none;cursor:pointer;color:blue;text-decoration:underline}
         .error{color:red}  
+        .mensaje{color:blue}
     </style>
 </head>
 <body>

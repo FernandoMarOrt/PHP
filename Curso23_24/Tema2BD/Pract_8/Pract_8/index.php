@@ -1,4 +1,5 @@
 <?php
+session_start();
 require "src/ctes_funciones.php";
 
 if(isset($_POST["btnContBorrarFoto"]))
@@ -301,6 +302,11 @@ if(isset($_POST["btnContBorrar"]))
     {
         require "vistas/vista_nuevo_usuario.php";
     }
+    
+    if(isset($_SESSION["mensaje"])){
+        echo "<p class='mensaje'>".$_SESSION["mensaje"]."</p>";
+    }
+    
 
     require "vistas/vista_tabla_principal.php";
     

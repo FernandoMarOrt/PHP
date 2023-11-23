@@ -1,4 +1,5 @@
 <?php
+session_start();
 require "src/ctes_funciones.php";
 
 
@@ -61,7 +62,8 @@ if(isset($_POST["btnNuevoUsuario"]) || isset($_POST["btnContInsertar"]) )
                 mysqli_close($conexion);
                 die(error_page("Práctica 1º CRUD","<h1>Práctica 1º CRUD</h1><p>No se ha podido hacer la consulta: ".$e->getMessage()."</p>"));
             }
-            
+
+             $_SESSION["mensaje"]="El usuario ha sido creado con exito";
             mysqli_close($conexion);
 
             header("Location:index.php");
