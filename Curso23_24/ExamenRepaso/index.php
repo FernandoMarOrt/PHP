@@ -13,7 +13,51 @@ define("NOMBRE_BD", "bd_exam_colegio");
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Document</title>    <style>
+        table,
+        td,
+        th {
+            border: 1px solid black;
+        }
+
+        table {
+            border-collapse: collapse;
+            text-align: center;
+            width: 30%;
+        }
+
+        th {
+            background-color: #CCC
+        }
+
+        table img {
+            width: 50px;
+        }
+
+        .enlace {
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: blue;
+            text-decoration: underline
+        }
+
+        .error {
+            color: red
+        }
+
+        .caratula_detalle {
+            height: 250px
+        }
+
+        .paralelo {
+            display: flex
+        }
+
+        .centrado {
+            text-align: center
+        }
+    </style>
 </head>
 
 <body>
@@ -60,8 +104,18 @@ define("NOMBRE_BD", "bd_exam_colegio");
             mysqli_data_seek($resultado, 0);
 
             try {
-                $consulta = "select * from notas";
-                $resultado = mysqli_query($conexion, $consulta);
+                $consulta = "select asignaturas.denominacion,notas.nota, asignaturas.cod_asig from asignaturas,notas where asignaturas.cod_asig=notas.cod_asig and notas.cod_alu='".$_POST["alumno"]."'";
+                $consulta_vacio = "select * 
+                FROM asignaturas 
+                WHERE cod_asig NOT IN (
+                    SELECT asignaturas.cod_asig 
+                    FROM asignaturas 
+                    INNER JOIN notas 
+                    ON asignaturas.cod_asig = notas.cod_asig 
+                    WHERE notas.cod_alu = '".$_POST["alumno"]."'
+                )";
+                $resultado = mysqli_query($conexion,$consulta);
+                $resultado2 = mysqli_query($conexion,$consulta_vacio);
             } catch (Exception $e) {
                 mysqli_close($conexion);
                 die("<p>No se ha podido realizar la consulta: " . $e->getMessage() . "</p></body></html>");
@@ -75,15 +129,47 @@ define("NOMBRE_BD", "bd_exam_colegio");
                 echo "<tr>";
                 echo "<td>".$tupla2["denominacion"]."</td>";
                 echo "<td>" .$tupla2["nota"]."</td>";
+                echo "<td><form action='index.php' method='post'>
+                <button class='enlace' type='submit' value='".$tupla2["cod_asig"]."' name='btnBorrar'>Borrar</button> - 
+                <button class='enlace' type='submit' value='".$tupla2["cod_asig"]."' name='btnEditar'>Editar</button>
+                </form></td>";
                 echo "</tr>";
             }
             echo "</table>";
+
+
+
+
+
+        echo "<br/>";
+        echo "<form action='index.php' method='post'>";
+        echo "<label>Asignaturas que ha ".$nombre_alumno." aun le quedan por calificar:</label> <select name='sinCalificar' id='sinCalificar'>";
+
+        while ($tupla3 = mysqli_fetch_assoc($resultado2)) {
+
+            if (isset($_POST["alumno"]) && $_POST["alumno"] == $tupla["cod_alu"]) {
+                echo "<option selected value='" . $tupla["cod_alu"] . "'>" . $tupla["nombre"] . "</option>";
+                $nombre_alumno = $tupla["nombre"];
+            } else {
+                echo "<option value='" . $tupla["cod_alu"] . "'>" . $tupla["nombre"] . "</option>";
+            }
         }
 
-        //
+        echo "</select>";
+        echo " <button type='submit' name='btnCalificar'>Calificar</button>";
+        echo "</form>";
 
 
 
+
+
+
+
+
+
+        }
+
+        //MUESTRO LAS QUE NO SE HAN CALIFICADO  
 
 
 
