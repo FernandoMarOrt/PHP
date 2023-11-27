@@ -71,12 +71,10 @@ define("NOMBRE_BD", "bd_exam_colegio");
 
             echo "<table>";
             echo "<tr><th>Asignatura</th><th>Nota</th><th>Accion</th></tr>";
-            while ($tupla = mysqli_fetch_assoc($resultado)) {
+            while ($tupla2 = mysqli_fetch_assoc($resultado)) {
                 echo "<tr>";
-                echo "<td>" . $tupla["nombre"] . "</td>";
-                echo "<td><form action='index.php' method='post'><button class='enlace' type='submit' value='" . $tupla["idPelicula"] . "' name='btnDetalle' title='Detalles del Usuario'>" . $tupla["titulo"] . "</button></form></td>";
-                echo "<td><img src='Img/" . $tupla["caratula"] . "' alt='caratula de Perfil' title='caratula de Perfil'></td>";
-                echo "<td><form action='index.php' method='post'><input type='hidden' name='nombre_caratula' value='" . $tupla["caratula"] . "'><button class='enlace' type='submit' value='" . $tupla["idPelicula"] . "' name='btnBorrar'>Borrar</button> - <button class='enlace' type='submit' value='" . $tupla["idPelicula"] . "' name='btnEditar'>Editar</button></form></td>";
+                echo "<td>".$tupla2["denominacion"]."</td>";
+                echo "<td>" .$tupla2["nota"]."</td>";
                 echo "</tr>";
             }
             echo "</table>";
