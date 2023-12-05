@@ -1,5 +1,5 @@
 <?php
-session_name("sesiones01");
+session_name("sesiones02");
 session_start();
 ?>
 
