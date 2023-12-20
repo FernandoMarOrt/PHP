@@ -1,5 +1,5 @@
 <?php
-define("MINUTOS",5);
+define("MINUTOS_INACT",5);
 
 define("SERVIDOR_BD","localhost");
 define("USUARIO_BD","jose");
@@ -21,24 +21,23 @@ function error_page($title,$body)
     return $page;
 }
 
+// Con cuatro argumentos comprueba si hay repetidos cuándo insertamos
+// Con seis argumentos comprueba si hay repetidos cuándo editamos
 function repetido($conexion,$tabla,$columna,$valor,$columna_clave=null,$valor_clave=null)
 {
-
     try{
-        if(isset($columna_clave)){
+        if(isset($columna_clave))
             $consulta="select * from ".$tabla." where ".$columna."='".$valor."' AND ".$columna_clave."<>'".$valor_clave."'";
-        }else{
+        else
             $consulta="select * from ".$tabla." where ".$columna."='".$valor."'";
-        }
-        
+
         $resultado=mysqli_query($conexion, $consulta);
         $respuesta=mysqli_num_rows($resultado)>0;
         mysqli_free_result($resultado);
     }
     catch(Exception $e)
     {
-        mysqli_close($conexion);
-        $respuesta=error_page("Práctica 1º CRUD","<h1>Práctica 1º CRUD</h1><p>No se ha podido hacer la consulta: ".$e->getMessage()."</p>");
+        $respuesta=$e->getMessage();
     }
     return $respuesta;
 }
@@ -57,4 +56,3 @@ function dni_valido($texto)
 {
     return LetraNIF(substr($texto,0,8))==substr($texto,-1);
 }
-?>

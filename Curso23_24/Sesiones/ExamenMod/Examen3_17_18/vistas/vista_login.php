@@ -1,5 +1,4 @@
 <?php
-
 if(isset($_POST["btnLogin"]))
 {
     $error_usuario=$_POST["usuario"]=="";
@@ -15,18 +14,18 @@ if(isset($_POST["btnLogin"]))
         catch(Exception $e)
         {
             session_destroy();
-            die(error_page("Examen Repaso","<h1>Videoclub</h1><p>No he podido conectarse a la base de batos: ".$e->getMessage()."</p>"));
+            die(error_page("Examen3 Curso 17-18","<h1>Video Club</h1><p>No he podido conectarse a la base de batos: ".$e->getMessage()."</p>"));
         }
 
         try{
-           $consulta="select usuario from usuarios where usuario='".$_POST["usuario"]."' and clave='".md5($_POST["clave"])."'";
+           $consulta="select tipo from usuarios where usuario='".$_POST["usuario"]."' and clave='".md5($_POST["clave"])."'";
            $resultado=mysqli_query($conexion, $consulta);
         }
         catch(Exception $e)
         {
             session_destroy();
             mysqli_close($conexion);
-            die(error_page("Examen Repaso","<h1>Videoclub</h1><p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
+            die(error_page("Examen3 Curso 17-18","<h1>Video Club</h1><p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
         }
 
         if(mysqli_num_rows($resultado)>0)
@@ -34,9 +33,15 @@ if(isset($_POST["btnLogin"]))
             $_SESSION["usuario"]=$_POST["usuario"];
             $_SESSION["clave"]=md5($_POST["clave"]);
             $_SESSION["ultima_accion"]=time();
+
+            $dato=mysqli_fetch_assoc($resultado);
             mysqli_free_result($resultado);
             mysqli_close($conexion);
-            header("Location:index.php");
+            
+            if($dato["tipo"]=="normal")
+                header("Location:index.php");
+            else
+                header("Location:admin/index.php");
             exit;
 
         }
@@ -50,23 +55,22 @@ if(isset($_POST["btnLogin"]))
 }
 
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Primer Login</title>
+    <title>Examen3 Curso 17-18</title>
     <style>
         .error{color:red}
         .mensaje{color:blue;font-size:1.25em}
     </style>
 </head>
 <body>
-    <h1>Primer Login</h1>
+    <h1>Video Club</h1>
     <form action="index.php" method="post">
         <p>
-            <label for="usuario">Usuario: </label>
+            <label for="usuario">Nombre de Usuario: </label>
             <input type="text" name="usuario" id="usuario" value="<?php if(isset($_POST["usuario"])) echo $_POST["usuario"];?>">
             <?php
             if(isset($_POST["btnLogin"]) && $error_usuario)
@@ -93,11 +97,9 @@ if(isset($_POST["btnLogin"]))
         </p>
     </form>
     <?php
-    if(isset($_SESSION["seguridad"])) //Por si me banean o me echan por tiempo
+    if(isset($_SESSION["seguridad"]))
     {
         echo "<p class='mensaje'>".$_SESSION["seguridad"]."</p>";
         session_destroy();
     }
     ?>
-</body>
-</html>
