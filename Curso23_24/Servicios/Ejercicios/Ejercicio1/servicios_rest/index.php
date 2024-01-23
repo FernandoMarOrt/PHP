@@ -2,7 +2,7 @@
 
 require __DIR__ . '/Slim/autoload.php';
 
-$app= new \Slim\App;
+$app = new \Slim\App;
 
 require "src/funciones_ctes.php";
 /*$app->get('/saludo',function(){
@@ -43,15 +43,15 @@ $app->put('/actualizar_saludo/{id}',function($request){
 
 
 //PARTE A
-$app->get('/productos',function(){
-    
+$app->get('/productos', function () {
+
     echo json_encode(obtener_productos());
 });
 
 
 //PARTE B
-$app->get('/producto/{cod}',function($request){
-    
+$app->get('/producto/{cod}', function ($request) {
+
     echo json_encode(obtener_producto($request->getAttribute('cod')));
 });
 
@@ -62,20 +62,55 @@ $app->get('/producto/{cod}',function($request){
 Insertaremos los productos que le pasaremos por un formulario retornando la infor-
 mación:“El producto (nombre_corto) se ha insertado correctamente”*/
 
-$app->post('/producto/insertar',function($request,){
+$app->post('/producto/insertar', function ($request) {
 
-    $datos[]=$request->getParam["cod"];
-    $datos[]=$request->getParam["nombre"];
-    $datos[]=$request->getParam["nombre_corto"];
-    $datos[]=$request->getParam["descripcion"];
-    $datos[]=$request->getParam["PVP"];
-    $datos[]=$request->getParam["familia"];
-    
+    $datos[] = $request->getParam("cod");
+    $datos[] = $request->getParam("nombre");
+    $datos[] = $request->getParam("nombre_corto");
+    $datos[] = $request->getParam("descripcion");
+    $datos[] = $request->getParam("PVP");
+    $datos[] = $request->getParam("familia");
+
     echo json_encode(insertar_producto($datos));
+});
 
+$app->put('/producto/actualizar/{cod}', function ($request) {
+
+
+    $datos[] = $request->getParam("nombre");
+    $datos[] = $request->getParam("nombre_corto");
+    $datos[] = $request->getParam("descripcion");
+    $datos[] = $request->getParam("PVP");
+    $datos[] = $request->getParam("familia");
+    $datos[] = $request->getAttribute("cod");
+
+    echo json_encode(actualizar_producto($datos));
 });
 
 
-$app->run();
+$app->delete('/producto/borrar/{cod}', function ($request) {
 
-?>
+    echo json_encode(borrar_producto($request->getAttribute("cod")));
+});
+
+
+$app->get('/familias', function () {
+
+    echo json_encode(obtener_familia());
+});
+
+
+$app->get('/repetido/{tabla}/{columna}/{valor}', function ($request) {
+
+    echo json_encode(repetido_insertar($request->getAttribute('tabla'),$request->getAttribute('columna'),$request->getAttribute('valor')));
+});
+
+
+$app->get('/repetido/{tabla}/{columna}/{valor}/{columna_id}/{valor_id}', function ($request) {
+
+    echo json_encode(repetido_editar($request->getAttribute('tabla'),$request->getAttribute('columna'),$request->getAttribute('valor'),$request->getAttribute('columna_id'),$request->getAttribute('valor_id')));
+});
+
+
+
+$app->run();
