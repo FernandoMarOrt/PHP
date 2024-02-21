@@ -32,18 +32,50 @@
              mysqli_close($conexion);
              die("<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p></body></html>");
          }
+    
+
+
 
          echo "<table>";
          echo "<tr><th>id</th><th>Título</th><th>Carátula</th></tr>";
          while($tupla=mysqli_fetch_assoc($resultado))
          {
             echo "<tr>";
-            echo "<td>".$tupla["idPelicula"]."</td>";
+            echo "<td>".$tupla["horas"]."</td>";
             echo "<td>".$tupla["titulo"]."</td>";
             echo "<td><img src='../Img/".$tupla["caratula"]."' alt='Carátula' title='Carátula'></td>";
             echo "</tr>";
+
+
+
          }
          echo "</table>";
+
+
+         for ($i=0; $i < $tupla; $i++) { 
+            
+            echo "<tr>";
+            echo "<td>".$tupla[]
+         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
          mysqli_free_result($resultado);
         ?>
     </body>
