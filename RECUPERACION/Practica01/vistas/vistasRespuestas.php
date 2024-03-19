@@ -20,11 +20,8 @@
 
 
     if($_FILES["archivo"]["name"]!=""){
-        $ext="";
-        $array_nombre=explode(".",$_FILES["archivo"]["name"]);
-        if(count($array_nombre)>1){ //SI NO LLEVA EXTENSION
-            $ext=".".end($array_nombre);
-        }
+        $array_ext=explode(".",$_FILES["archivo"]["name"]);
+        $ext=".".strtolower(end($array_ext));
         $nombre_nuevo='imagen'.$ext;
         @$var=move_uploaded_file($_FILES["archivo"]["tmp_name"],"images/".$nombre_nuevo);
         if($var){ //LO DEL @$var y esto es porque si no pega un error raro

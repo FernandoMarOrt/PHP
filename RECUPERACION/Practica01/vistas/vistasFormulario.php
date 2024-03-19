@@ -48,12 +48,20 @@
 
             <label>Dni:</label><br>
             <input type="text" name="dni" placeholder="dni" id="dni" value="<?php if (isset($_POST["dni"])) echo $_POST["dni"]; ?>">
+
             <?php
-            if (isset($_POST["btnGuardar"]) && $error_form) {
+
+            if (isset($_POST["btnGuardar"]) && $error_dni) {
+
                 if ($_POST["dni"] == "") {
-                    echo "<span class='error'>*Debes rellenar el dni*</span>";
+
+                    echo "<span class='error'>*Debes rellenar el dni*</<span>";
                 } elseif (!dni_bien_escrito(strtoupper($_POST["dni"]))) {
-                    echo "<span class='error'>*Debes rellenar el DNI con 8 digitos seguido de una letra*</span>";
+
+                    echo "<span class='error'>Debes rellenar el DNI con 8 digitos seguidos de una letra</<span>";
+                } else {
+
+                    echo "<span class='error'>El dni no es valido</<span>";
                 }
             }
 
@@ -61,14 +69,14 @@
         </p>
         <p>
             <label id="sexo">Sexo:</label><br>
-            <input type="radio" name="sexo" id="sexo" value="hombre" checked><label>Hombre</label><br>
-            <input type="radio" name="sexo" id="sexo" value="mujer"><label>Mujer</label>
+            <input type="radio" name="sexo" id="hombre" value="hombre" <?php if(!isset($_POST["sexo"]) || isset($_POST["sexo"]) && $_POST["sexo"]=="hombre") echo "checked"; ?>><label for="hombre">Hombre</label><br>
+            <input type="radio" name="sexo" id="mujer" value="mujer" <?php if(isset($_POST["sexo"]) && $_POST["sexo"]=="mujer") echo "checked"; ?>><label for="mujer">Mujer</label>
         </p>
 
 
 
         <p>
-            <label for="foto">Incluir mi foto (Max. 500KB)</label>
+            <label for="archivo">Incluir mi foto (Max. 500KB)</label>
             <input type="file" name="archivo" id="archivo" accept="image/*">
 
             <?php
@@ -83,6 +91,11 @@
                     } elseif (!getimagesize($_FILES["archivo"]["tmp_name"])) { //SI no selecciona una imagen
 
                         echo "<span class='error'>No has seleccionado un archivo de tipo imagen</<span>";
+                        
+                    }else if(!explode(".",$_FILES["archivo"]["name"])){
+
+                        echo "<span class='error'>El fichero subido debe tener extension</<span>";
+
                     } else { //SI supera el peso
 
                         echo "<span class='error'>El archivo seleccionado supera los 500KB</<span>";
@@ -107,7 +120,7 @@
         </p>
         <p>
             <button type="submit" name="btnGuardar">Guardar Cambios</button>
-            <button type="reset" name="Borrar los datos introducidos">Borrar los datos introducidos</button>
+            <button type="submit" name="btnReset" id="btnReset">Borrar los datos introducidos</button>
         </p>
 
 
