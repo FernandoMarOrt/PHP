@@ -5,6 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Practica 2</title>
+    <style>
+        .oculta {
+            display: none;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
 </head>
 
 <body>
@@ -53,7 +62,7 @@
 
 
         <p>
-            <label for="comentarios">Comentarios:</label>
+            <label for="comentario">Comentarios:</label>
             <textarea id="comentario" name="comentario"></textarea>
             <?php
             if (isset($_POST["enviar"]) && $errorComentario) {
@@ -64,8 +73,9 @@
 
         <p>
             <label for="archivo">Incluir mi foto (Archivo de tipo imagen Máx. 500KB):</label>
-            <input type="file" name="archivo" id="archivo" accept="image/*">
-
+            <button onclick='document.getElementById("archivo").click();return false;'>Seleccionar archivo</button>
+            <input id="archivo" class="oculta" onchange="document.getElementById('nombre_archivo').innerHTML=' '+document.getElementById('archivo').files[0].name+' ';" type="file" name="archivo" accept="image/*">
+            <span id="nombre_archivo"></span>
             <?php
 
             if (isset($_POST["enviar"]) && $error_archivo) {
