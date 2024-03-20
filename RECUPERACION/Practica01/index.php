@@ -21,10 +21,9 @@ if (isset($_POST["btnGuardar"])) {
     $error_archivo = $_FILES["archivo"]["name"] != "" && ($_FILES["archivo"]["error"] || !explode(".", $_FILES["archivo"]["name"]) || !getimagesize($_FILES["archivo"]["tmp_name"]) || $_FILES["archivo"]["size"] > 500 * 1024);
 
     /*Foto obligatoria*
-    $error_archivo = $_FILES["archivo"]["name"] != "" || ($_FILES["archivo"]["error"] || !explode(".", $_FILES["archivo"]["name"]) || !getimagesize($_FILES["archivo"]["tmp_name"]) || $_FILES["archivo"]["size"] > 500 * 1024);
+    $error_archivo = $_FILES["archivo"]["name"] == "" || ($_FILES["archivo"]["error"] || !explode(".", $_FILES["archivo"]["name"]) || !getimagesize($_FILES["archivo"]["tmp_name"]) || $_FILES["archivo"]["size"] > 500 * 1024);
     */
     $error_subs = !isset($_POST["boletin"]);
-
     $error_form = $error_usuario || $error_nombre || $error_password || $error_dni ||  $error_subs || $error_archivo;
 }
 
