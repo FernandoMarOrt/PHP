@@ -30,7 +30,7 @@ if (isset($_POST["enviar"])) {
     $errorSexo = !isset($_POST["sexo"]);
     $errorComentario = $_POST["comentario"] == "";
 
-    $error_archivo = $_FILES["archivo"]["name"] != "" || ($_FILES["archivo"]["error"] || !explode(".", $_FILES["archivo"]["name"]) || !getimagesize($_FILES["archivo"]["tmp_name"]) || $_FILES["archivo"]["size"] > 500 * 1024);
+    $error_archivo = $_FILES["archivo"]["name"] == "" || ($_FILES["archivo"]["error"] || !explode(".", $_FILES["archivo"]["name"]) || !getimagesize($_FILES["archivo"]["tmp_name"]) || $_FILES["archivo"]["size"] > 500 * 1024);
 
     $errorFormu = $errorNombre || $errorSexo || $errorComentario || $error_archivo;
 }
