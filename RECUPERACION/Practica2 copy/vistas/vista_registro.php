@@ -10,20 +10,119 @@ if (isset($_POST["btnReset"])) {
 if (isset($_POST["btnGuardar"])) {
 
     $error_usuario = $_POST["usuario"] == "";
+    if (!$error_usuario) {
+
+        try {
+            $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
+        } catch (PDOException $e) {
+            session_destroy();
+            die(error_page("Practica Rec 2", "<h1>Practica Rec 2</h1><p>No he podido conectarse a la base de batos: " . $e->getMessage() . "</p>"));
+        }
+
+        $error_usuario = (repetido($conexion,"usuarios","usuario",$_POST["usuario"]));
+        if (is_string($error_usuario)) {
+
+            $conexion = null;
+            session_destroy();
+            die(error_page("Practica Rec 2", "<h1>Practica Rec 2</h1><p>" . $error_usuario . "</p>"));
+        }
+    }
     $error_nombre = $_POST["nombre"] == "";
     $error_password = $_POST["password"] == "";
     $error_dni = $_POST["dni"] == "" || !dni_bien_escrito(strtoupper($_POST["dni"])) || !dni_valido(strtoupper($_POST["dni"]));
-    
-    
-    
+
+    if (!$error_dni) {
+        if (!isset($conexion)) {
+            try {
+                $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
+            } catch (PDOException $e) {
+                session_destroy();
+                die(error_page("Practica Rec 2", "<h1>Practica Rec 2</h1><p>No he podido conectarse a la base de batos: " . $e->getMessage() . "</p>"));
+            }
+        }
+
+
+        $error_dni = (repetido($conexion,"usuarios","usuario",strtoupper($_POST["dni"])));
+        if (is_string($error_dni)) {
+
+            $conexion = null;
+            session_destroy();
+            die(error_page("Practica Rec 2", "<h1>Practica Rec 2</h1><p>" . $error_dni . "</p>"));
+        }
+    }
+
+
     /*Foto no obligatoria*/
     $error_archivo = $_FILES["archivo"]["name"] != "" && ($_FILES["archivo"]["error"] || !explode(".", $_FILES["archivo"]["name"]) || !getimagesize($_FILES["archivo"]["tmp_name"]) || $_FILES["archivo"]["size"] > 500 * 1024);
 
     /*Foto obligatoria*
     $error_archivo = $_FILES["archivo"]["name"] == "" || ($_FILES["archivo"]["error"] || !explode(".", $_FILES["archivo"]["name"]) || !getimagesize($_FILES["archivo"]["tmp_name"]) || $_FILES["archivo"]["size"] > 500 * 1024);
     */
-    $error_subs = !isset($_POST["boletin"]);
-    $error_form = $error_usuario || $error_nombre || $error_password || $error_dni ||  $error_subs || $error_archivo;
+    $error_form = $error_usuario || $error_nombre || $error_password || $error_dni || $error_archivo;
+
+    if (!$error_form) {
+
+
+        try {
+            if(isset($_POST["subscripcion"])){
+                $subs=1;
+            }else{
+                $subs=0;
+            }
+            $consulta = "insert into usuarios (usuario,nombre,clave,dni,sexo,subscripcion) values (?,?,?,?,?,?)";
+            $sentencia = $conexion->prepare($consulta);
+            $sentencia->execute([$_POST["usuario"],$_POST["nombre"],md5($_POST["clave"]),strtoupper($_POST["dni"]),$_POST["sexo"],$subs]);
+            $respuesta = $sentencia->rowCount() > 0;
+            $sentencia=null;
+        } catch (Exception $e) {
+            $sentencia=null;
+            $conexion=null;
+            session_destroy();
+            die(error_page("Practica Rec 2", "<h1>Practica Rec 2</h1><p>" . $e->getMessage(). "</p>"));
+        }
+
+        $mensaje="Se ha registrado con exito";
+        if($_FILES["foto"]["name"]!=""){
+            $ultimo_id=$conexion->lastInsertId();
+            $array_ext=explode(".", $_FILES["archivo"]["name"]);
+            $ext=".".end($array_ext);
+            $nombre_nuevo="img_".$ultimo_id.$ext;
+            @$var=move_uploaded_file($_FILES["foto"]["tmp_name"],"Img/".$nombre_nuevo);
+            if($var){
+                try {
+
+                    $consulta = "update usuarios set foto=? where id_usuario=?";
+                    $sentencia = $conexion->prepare($consulta);
+                    $sentencia->execute([$nombre_nuevo, $ultimo_id]);
+                    $sentencia=null;
+                } catch (Exception $e) {
+                    unlink("images/".$nombre_nuevo);
+                    $sentencia=null;
+                    $conexion=null;
+                    session_destroy();
+                    die(error_page("Practica Rec 2", "<h1>Practica Rec 2</h1><p>" . $e->getMessage(). "</p>"));
+                }
+
+
+
+            }else{
+                $mensaje="Se ha registrado con exito pero con la imagen por defecto ya que no se ha podido mover la imagen a la carpeta destino en el servidor";
+            }
+        }
+
+
+        $conexion = null;
+        $_SESSION["mensaje_registro"] = $mensaje;
+        $_SESSION["usuario"] = $_POST["usuario"];
+        $_SESSION["clave"] = $_POST["clave"];
+        $_SESSION["ultima_accion"] = time();
+        header("Location:index.php");
+        exit();
+    }
+
+    if(isset($conexion)){
+        $conexion=null;
+    }
 }
 
 
@@ -37,6 +136,11 @@ if (isset($_POST["btnGuardar"])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Practica01</title>
+    <style>
+        .error {
+            color: red
+        }
+    </style>
 </head>
 
 <body>
@@ -50,6 +154,8 @@ if (isset($_POST["btnGuardar"])) {
             if (isset($_POST["btnGuardar"]) && $error_form) {
                 if ($_POST["usuario"] == "") {
                     echo "<span class='error'>*Debes rellenar el usuario*</span>";
+                } else {
+                    echo "<span class='error'>*Usuario repetido*</span>";
                 }
             }
             ?>
@@ -91,9 +197,13 @@ if (isset($_POST["btnGuardar"])) {
                 } elseif (!dni_bien_escrito(strtoupper($_POST["dni"]))) {
 
                     echo "<span class='error'>Debes rellenar el DNI con 8 digitos seguidos de una letra</<span>";
-                } else {
+
+                } elseif (!dni_valido(strtoupper($_POST["dni"]))) {
 
                     echo "<span class='error'>El dni no es valido</<span>";
+
+                } else {
+                    echo "<span class='error'>*DNI repetido*</span>";
                 }
             }
 
@@ -101,8 +211,8 @@ if (isset($_POST["btnGuardar"])) {
         </p>
         <p>
             <label id="sexo">Sexo:</label><br>
-            <input type="radio" name="sexo" id="hombre" value="hombre" <?php if(!isset($_POST["sexo"]) || isset($_POST["sexo"]) && $_POST["sexo"]=="hombre") echo "checked"; ?>><label for="hombre">Hombre</label><br>
-            <input type="radio" name="sexo" id="mujer" value="mujer" <?php if(isset($_POST["sexo"]) && $_POST["sexo"]=="mujer") echo "checked"; ?>><label for="mujer">Mujer</label>
+            <input type="radio" name="sexo" id="hombre" value="hombre" <?php if (!isset($_POST["sexo"]) || isset($_POST["sexo"]) && $_POST["sexo"] == "hombre") echo "checked"; ?>><label for="hombre">Hombre</label><br>
+            <input type="radio" name="sexo" id="mujer" value="mujer" <?php if (isset($_POST["sexo"]) && $_POST["sexo"] == "mujer") echo "checked"; ?>><label for="mujer">Mujer</label>
         </p>
 
 
@@ -123,11 +233,9 @@ if (isset($_POST["btnGuardar"])) {
                     } elseif (!getimagesize($_FILES["archivo"]["tmp_name"])) { //SI no selecciona una imagen
 
                         echo "<span class='error'>No has seleccionado un archivo de tipo imagen</<span>";
-                        
-                    }else if(!explode(".",$_FILES["archivo"]["name"])){
+                    } else if (!explode(".", $_FILES["archivo"]["name"])) {
 
                         echo "<span class='error'>El fichero subido debe tener extension</<span>";
-
                     } else { //SI supera el peso
 
                         echo "<span class='error'>El archivo seleccionado supera los 500KB</<span>";
@@ -142,13 +250,6 @@ if (isset($_POST["btnGuardar"])) {
 
         <p>
             <input type="checkbox" name="boletin" id="boletin" <?php if (isset($_POST["boletin"])) echo "checked"; ?>><label>Suscribirme al boletin de novedades</label><br>
-            <?php
-            if (isset($_POST["btnGuardar"]) && $error_form) {
-                if (!isset($_POST["boletin"])) {
-                    echo "<span class='error'>*Debes marcar la subscripcion*</span>";
-                }
-            }
-            ?>
         </p>
         <p>
             <button type="submit" name="btnGuardar">Guardar Cambios</button>

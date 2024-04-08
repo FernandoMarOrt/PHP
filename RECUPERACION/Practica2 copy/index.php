@@ -26,7 +26,7 @@ if (isset($_SESSION["usuario"])) {
 
     $conexion=null;
 
-} elseif (isset($_POST["btnRegistrarse"])) {
+} elseif (isset($_POST["btnRegistrarse"]) || isset($_POST["btnReset"]) || isset($_POST["btnGuardar"])) {
 
     require "vistas/vista_registro.php";
 } else {
