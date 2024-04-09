@@ -4,36 +4,28 @@ session_start();
 
 require "src/funciones_ctes.php";
 
-if(isset($_POST["btnSalir"]))
-{
+if (isset($_POST["btnSalir"])) {
     session_destroy();
     header("Location:index.php");
     exit();
 }
 
 
-if(isset($_SESSION["usuario"]))
-{
-    
+if (isset($_SESSION["usuario"])) {
+
     require "src/seguridad.php";
 
-    if($datos_usuario_log["tipo"]=="normal")
-        
+    if ($datos_usuario_log["tipo"] == "normal") {
+
         require "vistas/vista_normal.php";
-    else
+    } else
         require "vistas/vista_admin.php";
 
- 
-    $conexion=null;
-}
-elseif(isset($_POST["btnRegistrarse"]) || isset($_POST["btnBorrar"]) || isset($_POST["btnEnviar"])  )
-{
+
+    $conexion = null;
+} elseif (isset($_POST["btnRegistrarse"]) || isset($_POST["btnBorrar"]) || isset($_POST["btnEnviar"])) {
 
     require "vistas/vista_registro.php";
-}
-else
-{
+} else {
     require "vistas/vista_home.php";
 }
-
-?>

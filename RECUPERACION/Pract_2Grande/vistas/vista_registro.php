@@ -103,8 +103,7 @@ if(isset($_POST["btnEnviar"]))
                     unlink("images/".$nombre_nuevo);
                     $sentencia=null;
                     $conexion=null;
-                    session_destroy();
-                    die(error_page("Práctica Rec 2","<h1>Práctica Rec 2</h1><p>Imposible realizar la consulta. Error:".$e->getMessage()."</p>"));
+                    $mensaje="Se ha registrado con éxito pero con la imagen por defecto por un problema en el servidor";
                 }
             }
             else

@@ -63,7 +63,7 @@
         while ($tupla = $sentencia->fetch(PDO::FETCH_ASSOC)) {
             echo "<tr>";
             echo "<td>" . $tupla["id_usuario"] . "</td>";
-            echo "<td><img src='Img/".$tupla["foto"]."'></td>";
+            echo "<td><img src='images/".$tupla["foto"]."'></td>";
             echo "<td>" . $tupla["nombre"] . "</td>";
             echo "<td>" . $tupla["usuario"] . "</td>";
             echo "</tr>";
