@@ -1,135 +1,233 @@
+<?php
+if(isset($_POST["btnContNuevo"]))
+{
+    //compruebo los errores
+
+    $error_nombre=$_POST["nombre"]=="";
+    $error_usuario=$_POST["usuario"]=="";
+    if(!$error_usuario)
+    {
+        $error_usuario=repetido($conexion,"usuarios","usuario",$_POST["usuario"]);
+        if(is_string($error_usuario))
+        {
+            $conexion=null;
+            session_destroy();
+            die(error_page("Práctica Rec 2","<h1>Práctica Rec 2</h1><p>".$error_usuario."</p>"));
+        }
+    }
+    $error_clave=$_POST["clave"]=="";
+    $error_dni=$_POST["dni"]=="" || !dni_bien_escrito($_POST["dni"]) || !dni_valido($_POST["dni"]);
+    if(!$error_dni)
+    {
+        $error_dni=repetido($conexion,"usuarios","dni",strtoupper($_POST["dni"]));
+        if(is_string($error_dni))
+        {
+            $conexion=null;
+            session_destroy();
+            die(error_page("Práctica Rec 2","<h1>Práctica Rec 2</h1><p>".$error_dni."</p>"));
+        }
+    }
+ 
+    $error_foto=$_FILES["foto"]["name"]!="" && ($_FILES["foto"]["error"] || !explode(".", $_FILES["foto"]["name"])|| !getimagesize($_FILES["foto"]["tmp_name"] ) || $_FILES["foto"]["size"]>500*1024);//Foto no obligatoria
+    //$error_foto=$_FILES["foto"]["name"]=="" || $_FILES["foto"]["error"] || !explode(".", $_FILES["foto"]["name"])|| !getimagesize($_FILES["foto"]["tmp_name"] ) || $_FILES["foto"]["size"]>500*1024;//Foto obligatoria
+    $error_form=$error_nombre|| $error_usuario || $error_clave || $error_dni || $error_foto;
+   
+    if(!$error_form)
+    {
+
+        try{
+            if(isset($_POST["subscripcion"]))
+                $subs=1;
+            else
+                $subs=0;
+
+            $consulta = "insert into usuarios (usuario,nombre,clave,dni,sexo,subscripcion) values (?,?,?,?,?,?)";
+            $sentencia=$conexion->prepare($consulta);
+            $sentencia->execute([$_POST["usuario"],$_POST["nombre"],md5($_POST["clave"]),strtoupper($_POST["dni"]),$_POST["sexo"],$subs]);
+            $sentencia=null;
+          
+        }
+        catch(PDOException $e){
+            $setencia=null;
+            $conexion=null;
+            session_destroy();
+            die(error_page("Práctica Rec 2","<h1>Práctica Rec 2</h1><p>Imposible realizar la consulta. Error:".$e->getMessage()."</p>"));
+        }
+       
+        $mensaje="Uusario insertado con éxito";
+
+        if($_FILES["foto"]["name"]!="")
+        {
+            $ultm_id=$conexion->lastInsertId();
+            $array_ext=explode(".", $_FILES["foto"]["name"]);
+            $ext=".".end($array_ext);
+            $nombre_nuevo="img_".$ultm_id.$ext;
+            @$var=move_uploaded_file($_FILES["foto"]["tmp_name"],"images/".$nombre_nuevo);
+            if($var)
+            {
+                try{
+                  
+                    $consulta = "update usuarios set foto=? where id_usuario=?";
+                    $sentencia=$conexion->prepare($consulta);
+                    $sentencia->execute([$nombre_nuevo, $ultm_id]);
+                    $sentencia=null;
+                  
+                }
+                catch(PDOException $e){
+                    unlink("images/".$nombre_nuevo);
+                    $sentencia=null;
+                    $conexion=null;
+                    $mensaje="Usuario insertado con éxito pero con la imagen por defecto por un problema en la BD del servidor";
+                }
+            }
+            else
+            {
+                $mensaje="Usuario insertado con éxito pero con la imagen por defecto ya que no se ha podido mover la imagen a la carpeta destino en el servidor";
+            }
+          
+        }
+
+        $conexion=null;
+        $_SESSION["mensaje_accion"]=$mensaje;
+        header("Location:index.php");
+        exit();
+    }
+}
+
+
+if(isset($_POST["btnContBorrar"]))
+{
+    try{
+    
+        $consulta = "DELETE from usuarios where id_usuario=?";
+        $sentencia=$conexion->prepare($consulta);
+        $sentencia->execute([$_POST["btnContBorrar"]]);
+        if($_POST["foto"]!=FOTO_DEFECTO)
+            unlink("images/".$_POST["foto"]);
+
+        $sentencia=null;
+        $conexion=null;
+        $_SESSION["mensaje_accion"]="Usuario borrado con éxito";
+        header("Location:index.php");
+        exit;
+    }
+    catch(PDOException $e){
+        $sentencia=null;
+        $conexion=null;
+        session_destroy();
+        die(error_page("Práctica Rec 2","<h1>Práctica Rec 2</h1><p>Imposible realizar la consulta. Error:".$e->getMessage()."</p>"));
+    }
+}
+
+
+
+if(isset($_POST["btnDetalles"]))
+{
+    try{
+    
+        $consulta = "select * from usuarios where id_usuario=?";
+        $sentencia=$conexion->prepare($consulta);
+        $sentencia->execute([$_POST["btnDetalles"]]);
+        if($sentencia->rowCount()>0)
+            $detalles_usu=$sentencia->fetch(PDO::FETCH_ASSOC);
+        else
+            $detalles_usu=false;
+
+        $sentencia=null;
+    }
+    catch(PDOException $e){
+        $sentencia=null;
+        $conexion=null;
+        session_destroy();
+        die(error_page("Práctica Rec 2","<h1>Práctica Rec 2</h1><p>Imposible realizar la consulta. Error:".$e->getMessage()."</p>"));
+    }
+}
+
+
+//// Consulta para obtener los usuarios a listar en la Tabla
+
+try{
+    
+    $consulta = "SELECT * FROM usuarios WHERE tipo<>'admin'";
+    $sentencia=$conexion->prepare($consulta);
+    $sentencia->execute();
+}
+catch(PDOException $e){
+    $sentencia=null;
+    $conexion=null;
+    session_destroy();
+    die(error_page("Práctica Rec 2","<h1>Práctica Rec 2</h1><p>Imposible realizar la consulta. Error:".$e->getMessage()."</p>"));
+}
+$usuarios=$sentencia->fetchAll(PDO::FETCH_ASSOC);
+$sentencia=null;
+?>
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Práctica Rec 2</title>
     <style>
-        .en_linea {
-            display: inline
-        }
-
-        .enlace {
-            border: none;
-            background: none;
-            color: blue;
-            text-decoration: underline;
-            cursor: pointer
-        }
-
-        table,
-        td,
-        th {
-            border: 1px solid black;
-        }
-
-        table {
-            border-collapse: collapse;
-            text-align: center;
-            width: 70%;
-        }
-
-        table img {
-            height: 100px;
-        }
-
-        img {
-            height: 100px;
-        }
+        .error{color:red}
+        .en_linea{display:inline}
+        .enlace{border:none;background:none;color:blue;text-decoration:underline;cursor:pointer}
+        table{border-collapse:collapse;}
+        table,th,td{border:1px solid black}
+        th{background-color:#CCC}
+        .reducida{height:100px}
+        .centrar{ width:80%;margin:0 auto; text-align: center; } 
+        .mensaje{font-size: 1.25rem;color:blue}
     </style>
 </head>
-
 <body>
     <h1>Práctica Rec 2</h1>
     <div>
-        Bienvenido <strong><?php echo $datos_usuario_log["usuario"]; ?></strong> -
+        Bienvenido <strong><?php echo $datos_usuario_log["usuario"];?></strong> - 
         <form class="en_linea" action="index.php" method="post">
             <button class="enlace" name="btnSalir" type="submit">Salir</button>
         </form>
-
-      
-
-        <?php
-
-        if (isset($_POST["btnContBorrar"])) {
-            try {
-                $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
-            } catch (PDOException $e) {
-                session_destroy();
-                die(error_page("Práctica 2º CRUD", "<h1>Práctica 1º CRUD</h1><p>No he podido conectarse a la base de batos: " . $e->getMessage() . "</p>"));
-            }
-
-            try {
-
-                $consulta = "delete from usuarios where id_usuario=?";
-                $sentencia = $conexion->prepare($consulta);
-                $sentencia->execute([$_POST["btnContBorrar"]]);
-            } catch (PDOException $e) {
-                $sentencia = null;
-                $conexion = null;
-                session_destroy();
-                die(error_page("Práctica 1º CRUD", "<h1>Práctica 1º CRUD</h1><p>No se ha podido hacer la consulta: " . $e->getMessage() . "</p>"));
-            }
-
-            $sentencia = null;
-            $conexion = null;
-            header("Location:index.php");
-            exit();
-        }
-
-
-        if (isset($_POST["btnDetalle"])) {
-
-            require "vistas/vista_detalle.php";
-
-        } elseif (isset($_POST["btnBorrar"])) {
-
-            require "vistas/vista_conf_borrar.php";
-
-        } elseif (isset($_POST["btnNuevoUsu"])) {
-
-            require "vistas/vista_nuevousu.php";
-        
-        }
-
-        try {
-            $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
-        } catch (PDOException $e) {
-            session_destroy();
-            echo "<p>No se ha podido conectar con la base de datos " . $e->getMessage() . "</p></body></html>";
-        }
-
-
-        try {
-            $consulta = "select * from usuarios where tipo='normal'";
-            $sentencia = $conexion->prepare($consulta);
-            $sentencia->execute();
-        } catch (PDOException $e) {
-            session_destroy();
-            echo "<p>No se ha podido conectar con la base de datos " . $e->getMessage() . "</p></body></html>";
-        }
-
-        echo "<h3>Listado de los usuarios</h3>";
-
-        if ($sentencia->rowCount() > 0) {
-            echo "<table>";
-            echo "<tr>";
-            echo "<td>#</td><th>Foto</th><th>Nombre</th><th><form action='index.php' method='post'><button class='enlace' name='btnNuevoUsu'>Usuario+</button></form></th>";
-            echo "</tr>";
-            while ($tupla = $sentencia->fetch(PDO::FETCH_ASSOC)) {
-                echo "<tr>";
-                echo "<td>" . $tupla["id_usuario"] . "</td>";
-                echo "<td><img src='images/" . $tupla["foto"] . "'></td>";
-                echo "<td><form action='index.php' method='post'><button class='enlace' name='btnDetalle' value='" . $tupla["id_usuario"] . "'>" . $tupla["nombre"] . "</form></button></td>";
-                echo "<td><form action='index.php' method='post'><button class='enlace' name='btnBorrar' value='" . $tupla["id_usuario"] . "'>Borrar</button> - <button class='enlace'>Editar</button></form></td>";
-                echo "</tr>";
-            }
-            echo "</table>";
-        }
-
-        ?>
     </div>
-</body>
 
+    <?php
+    if(isset($_POST["btnBorrar"]))
+    {
+        require "vistas/vista_borrar.php";
+    }
+
+    if(isset($_POST["btnDetalles"]))
+    {
+       require "vistas/vista_detalle.php";
+    }
+
+    if(isset($_POST["btnNuevo"]) || isset($_POST["btnBorrarNuevo"]) || isset($_POST["btnContNuevo"]))
+    {
+       require "vistas/vista_nuevousuario.php";
+    }
+
+    if (isset($_POST["btnEditar"]) || isset($_POST["btnContEditar"]) || isset($_POST["btnBorrarFoto"]) || isset($_POST["btnNoBorrarFoto"]) || isset($_POST["btnContBorrarFoto"])) {
+        require "vistas/vista_editar.php";
+    }
+
+    if(isset($_SESSION["mensaje_accion"]))
+    {
+        echo "<p class='mensaje'>".$_SESSION["mensaje_accion"]."</p>";
+        unset($_SESSION["mensaje_accion"]);
+    }
+
+    echo "<h2>Listado de los usuarios (no admin)</h2>";
+    echo "<table class='centrar'>";
+    echo "<tr><th>#</th><th>Foto</th><th>Nombre</th><th><form action='index.php' method='post'><button class='enlace' type='submit' name='btnNuevo'>Usuario+</button></form></th></tr>";
+    foreach($usuarios as $tupla)
+    {
+        echo "<tr>";
+        echo "<td>".$tupla["id_usuario"]."</td>";
+        echo "<td><img class='reducida' src='images/".$tupla["foto"]."' alt='Foto' title='Foto'></td>";
+        echo "<td><form action='index.php' method='post'><button class='enlace' type='submit' value='".$tupla["id_usuario"]."' name='btnDetalles'>".$tupla["nombre"]."</button></form></td>";
+        echo "<td><form action='index.php' method='post'><input type='hidden' name='foto' value='".$tupla["foto"]."'/><button class='enlace' type='submit' name='btnBorrar' value='".$tupla["id_usuario"]."'>Borrar</button> - Editar</form></td>";
+        echo "</tr>";
+    }
+    echo "</table>";
+
+    ?>
+</body>
 </html>

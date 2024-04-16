@@ -18,7 +18,7 @@ catch(PDOException $e){
     $sentencia=null;
     $conexion=null;
     session_destroy();
-    die(error_page("Práctica Rec 2","<h1>Práctica Rec 2</h1><p>Imposible conectar a la BD. Error:".$e->getMessage()."</p>"));
+    die(error_page("Práctica Rec 2","<h1>Práctica Rec 2</h1><p>Imposible realizar la consulta. Error:".$e->getMessage()."</p>"));
 }
 
 if($sentencia->rowCount()<=0)

@@ -7,6 +7,8 @@ define("NOMBRE_BD","bd_rec_cv");
 
 define("MINUTOS",5);
 
+define("FOTO_DEFECTO","no_imagen.jpg");
+
 function error_page($title, $body)
 {
     return '<!DOCTYPE html>

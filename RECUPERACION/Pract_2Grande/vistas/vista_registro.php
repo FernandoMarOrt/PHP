@@ -92,7 +92,6 @@ if(isset($_POST["btnEnviar"]))
             {
                 try{
                   
-        
                     $consulta = "update usuarios set foto=? where id_usuario=?";
                     $sentencia=$conexion->prepare($consulta);
                     $sentencia->execute([$nombre_nuevo, $ultm_id]);
@@ -103,7 +102,7 @@ if(isset($_POST["btnEnviar"]))
                     unlink("images/".$nombre_nuevo);
                     $sentencia=null;
                     $conexion=null;
-                    $mensaje="Se ha registrado con éxito pero con la imagen por defecto por un problema en el servidor";
+                    $mensaje="Se ha registrado con éxito pero con la imagen por defecto por un problema en la BD del servidor";
                 }
             }
             else
@@ -111,7 +110,6 @@ if(isset($_POST["btnEnviar"]))
                 $mensaje="Se ha registrado con éxito pero con la imagen por defecto ya que no se ha podido mover la imagen a la carpeta destino en el servidor";
             }
           
-
         }
 
         $conexion=null;
