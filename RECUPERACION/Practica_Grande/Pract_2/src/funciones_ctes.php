@@ -57,4 +57,22 @@ function repetido($conexion, $tabla, $columna, $valor)
     $sentencia=null;
     return $respuesta;
 }
+
+function repetido_editando($conexion, $tabla, $columna, $valor,$columna_clave,$valor_clave)
+{
+    try{
+     
+        $consulta = "SELECT ".$columna." from ".$tabla." where ".$columna."=? AND ".$columna_clave."<>?";
+        $sentencia=$conexion->prepare($consulta);
+        $sentencia->execute([$valor,$valor_clave]);
+        $respuesta=$sentencia->rowCount()>0;
+    }
+    catch(PDOException $e){
+        
+        $respuesta="Imposible realizar la consulta. Error:".$e->getMessage();
+    }
+
+    $sentencia=null;
+    return $respuesta;
+}
 ?>
