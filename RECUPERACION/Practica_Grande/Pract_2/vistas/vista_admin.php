@@ -496,7 +496,7 @@ $sentencia = null;
                                 <?php
                                 if (isset($_POST["btnBorrarFoto"]))
                                     echo "¿Estás seguro que quieres borra la foto?<br><br><button name='btnContBorrarFoto'>Si</button><button name='btnNoBorrarFoto'>No</button>";
-                                elseif ($foto != "no_imagen.jpg")
+                                elseif ($foto != FOTO_DEFECTO)
                                     echo '<button name="btnBorrarFoto">Borrar Foto</button>';
                                 ?>
                             </p>
