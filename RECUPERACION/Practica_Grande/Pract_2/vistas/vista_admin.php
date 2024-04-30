@@ -256,6 +256,13 @@ if (isset($_POST["btnDetalles"])) {
 
 //// Consulta para obtener los usuarios a listar en la Tabla
 
+
+
+
+
+
+
+
 try {
 
     $consulta = "SELECT * FROM usuarios WHERE tipo<>'admin'";
