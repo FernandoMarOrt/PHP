@@ -37,7 +37,7 @@ if(isset($_POST["btnLogin"]))
             $_SESSION["api_session"]=$obj->api_session;
             
             if($obj->usuario->tipo=="tutor")
-                header("Location:admin/index.php");
+                header("Location:admin/gest_libros.php");
             else
                 header("Location:index.php");
             

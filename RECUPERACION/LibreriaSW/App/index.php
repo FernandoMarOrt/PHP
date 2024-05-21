@@ -1,16 +1,19 @@
 <?php
-session_name("Examen3_Pract_Rec_23_24");
+//Pasado a SW
+session_name("Examen3_Pract_Rec_23_24_SW");
 session_start();
 
 require "src/funciones_ctes.php";
 
 if(isset($_POST["btnSalir"]))
 {
+    $datos_env["api_key"]=$_SESSION["api_key"];
     session_destroy();
-    header("Location:index.php");
-    exit;
-}
 
+    consumir_servicios_REST(DIR_SERV."/salir","POST",$datos_env);
+    header("Location:index.php");
+    exit();
+}
 
 if(isset($_SESSION["usuario"]))
 {
@@ -21,16 +24,11 @@ if(isset($_SESSION["usuario"]))
         
         require "vistas/vista_normal.php";
     else
-    {
-        $conexion=null;
-        header("Location:admin/gest_libros.php");
-        exit;
-    }
 
-
+    header("Location:admin/gest_libros.php");
+    exit;
     $conexion=null;
-}
-else
+}else
 {
     require "vistas/vista_home.php";
 }
