@@ -1,8 +1,8 @@
 <?php
-session_name("examen3_23_24");
+session_name("Examen3_Pract_Rec_23_24_SW");
 session_start();
 
-require "../src/funct_ctes.php";
+require "../src/funciones_ctes.php";
 
 if(isset($_POST["btnSalir"]))
 {
@@ -15,7 +15,6 @@ if(isset($_POST["btnSalir"]))
 
 if(isset($_SESSION["usuario"]))
 {
-    $salto="../index.php";
 
     try{
         $conexion=mysqli_connect(SERVIDOR_BD,USUARIO_BD,CLAVE_BD,NOMBRE_BD);
@@ -29,7 +28,7 @@ if(isset($_SESSION["usuario"]))
 
     require "../src/seguridad.php";
     
-    if($datos_usuario_logueado["tipo"]=="admin")
+    if($datos_usuario_log["tipo"]=="admin")
     {
         require "../vistas/vista_admin.php";
     }

@@ -1,3 +1,4 @@
+<!-- NO TOCAR -->
 <!DOCTYPE html>
     <html lang="es">
     <head>
@@ -14,7 +15,7 @@
     </head>
     <body>
         <h1>Librería</h1>
-        <div>Bienvenido <strong><?php echo $datos_usuario_logueado["lector"];?></strong> - 
+        <div>Bienvenido <strong><?php echo $datos_usuario_log["lector"];?></strong> - 
             <form class='enlinea' action="index.php" method="post">
                 <button class='enlace' type="submit" name="btnSalir">Salir</button>
             </form>

@@ -1,52 +1,44 @@
 <?php
-//No estoy logueado
+//NO TOCAR
     if(isset($_POST["btnEntrar"]))
     {
+        $error_usuario=$_POST["usuario"]=="";
+        $error_clave=$_POST["clave"]=="";
+        $error_form=$error_usuario||$error_clave;
         if(!$error_form)
         {
-    
-            $url=DIR_SERV."/login";
-            $datos["usuario"]=$_POST["usuario"];
-            $datos["clave"]=md5($_POST["clave"]);
-            $respuesta=consumir_servicios_REST($url,"POST",$datos);
-            $obj=json_decode($respuesta);
-            if(!$obj)
+            $datos_env["lector"]=$_POST["usuario"];
+            $datos_env["clave"]=md5($_POST["clave"]);
+            $respuesta=consumir_servicios_REST(DIR_SERV."/login","POST",$datos_env);
+            $json=json_decode($respuesta,true);
+            if(!$json)
             {
                 session_destroy();
-                die(error_page("LIBRERIA","<h1>Libreria</h1><p>Error consumiendo el servicio: ".$url."</p>"));
+                die(error_page("Práctica Rec 3","<h1>Práctica Rec 3</h1><p>Sin respuesta oportuna de la API</p>"));  
             }
-    
-            if(isset($obj->error))
+            if(isset($json["error_bd"]))
             {
                 session_destroy();
-                die(error_page("LIBRERIA","<h1>Libreria</h1><p>".$obj->error."</p>"));
+                die(error_page("Práctica Rec 3","<h1>Práctica Rec 3</h1><p>".$json["error_bd"]."</p>"));
             }
     
-            if(isset($obj->mensaje))
+            if(isset($json["usuario"]))
             {
-                $error_usuario=true;
-            }
-            else
-            {
+                $_SESSION["usuario"]=$json["usuario"]["lector"];
+                $_SESSION["clave"]=$json["usuario"]["clave"];
+                $_SESSION["ultm_accion"]=time();
+                $_SESSION["api_key"]=$json["api_key"];
     
-                $_SESSION["usuario"]=$obj->usuario->usuario;
-                $_SESSION["clave"]=$obj->usuario->clave;
-                $_SESSION["ult_accion"]=time();
-                
-                $_SESSION["api_session"]=$obj->api_session;
-                
-                if($obj->usuario->tipo=="admin")
-                    header("Location:admin/index.php");
-                else
-                    header("Location:index.php");
-                
+                header("Location:index.php");
                 exit();
             }
+            else
+                $error_usuario=true;
     
         }
 
     }
-    
+
 
 ?>
     <!DOCTYPE html>
@@ -58,7 +50,6 @@
         <style>
             img{height:200px}
             div.libros{text-align:center;width:30%;margin-top:2.5%;margin-left:2.5%;float:left}
-            
         </style>
     </head>
     <body>

@@ -1,5 +1,6 @@
 <?php
-define("MINUTOS_INACT",5);
+//NO TOCAR
+define("MINUTOS",5);
 
 define("SERVIDOR_BD","localhost");
 define("USUARIO_BD","jose");

@@ -24,7 +24,7 @@ $app->post("/salir", function ($request) {
 
 $app->post("/login", function ($request) {
 
-    $datos[] = $request->getParam("usuario");
+    $datos[] = $request->getParam("lector");
     $datos[] = $request->getParam("clave");
     echo json_encode(login($datos));
 });

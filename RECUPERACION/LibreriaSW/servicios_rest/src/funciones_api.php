@@ -2,9 +2,6 @@
 
 require "src/conf_bd.php";
 
-
-
-
 function login($datos)
 {
     try{
@@ -17,7 +14,7 @@ function login($datos)
 
     try{
        
-        $consulta="select * from usuarios where usuario=? AND clave=?";
+        $consulta="select * from usuarios where lector=? AND clave=?";
         $sentencia=$conexion->prepare($consulta);
         $sentencia->execute($datos);
         if($sentencia->rowCount()>0)
@@ -29,7 +26,7 @@ function login($datos)
             $respuesta["api_key"]=session_id();
 
 
-            $_SESSION["usuario"]=$respuesta["usuario"]["usuario"];
+            $_SESSION["usuario"]=$respuesta["usuario"]["lector"];
             $_SESSION["clave"]=$respuesta["usuario"]["clave"];
             $_SESSION["tipo"]=$respuesta["usuario"]["tipo"];
             
@@ -65,7 +62,7 @@ function logueado($datos)
 
     try{
        
-        $consulta="select * from usuarios where usuario=? AND clave=?";
+        $consulta="select * from usuarios where lector=? AND clave=?";
         $sentencia=$conexion->prepare($consulta);
         $sentencia->execute($datos);
         
@@ -243,7 +240,41 @@ function obtener_libros()
 
 
 
-function obtener_usuarios_pag($pagina,$registros)
+
+function obtener_libro($referencia)
+{
+    try{
+        $conexion=new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD,USUARIO_BD,CLAVE_BD,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'")); 
+    }
+    catch(PDOException $e){
+        $respuesta["error_bd"]="Imposible conectar a la BD. Error:".$e->getMessage();
+        return $respuesta;
+    }
+
+    try{
+       
+        $consulta="select * from libros wherere referencia=?";
+        $sentencia=$conexion->prepare($consulta);
+        $sentencia->execute([$referencia]);
+        $respuesta["libros"]=$sentencia->fetchAll(PDO::FETCH_ASSOC);
+        $sentencia=null;
+        $conexion=null;
+        return $respuesta;
+        
+    }
+    catch(PDOException $e){
+        $sentencia=null;
+        $conexion=null;
+        $respuesta["error_bd"]="Error en la consulta. Error:".$e->getMessage();
+        return $respuesta;
+    }
+
+}
+
+
+
+
+function obtener_libros_pag($pagina,$registros)
 {
     try{
         $conexion=new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD,USUARIO_BD,CLAVE_BD,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'")); 
@@ -273,7 +304,7 @@ function obtener_usuarios_pag($pagina,$registros)
 
 }
 
-function obtener_todos_usuarios_filtro($buscar)
+function obtener_libros_filtro($buscar)
 {
     try{
         $conexion=new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD,USUARIO_BD,CLAVE_BD,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'")); 
@@ -304,7 +335,7 @@ function obtener_todos_usuarios_filtro($buscar)
 }
 
 
-function obtener_usuarios_filtro_pag($pagina,$registros,$buscar)
+function obtener_libros_filtro_pag($pagina,$registros,$buscar)
 {
     try{
         $conexion=new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD,USUARIO_BD,CLAVE_BD,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'")); 
