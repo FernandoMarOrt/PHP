@@ -59,7 +59,7 @@ for ($hora = 1; $hora <= count($horas); $hora++) {
         }
 
 
-        $profesores_guardia[$hora] = $json["usuario"];
+        $profesores_guardia[$hora] = $json["usuarios"];
     }
 }
 
@@ -121,31 +121,63 @@ for ($hora = 1; $hora <= count($horas); $hora++) {
     <?php
 
 
-    echo "<table>";
-    echo "<tr>";
-    echo "<th>Hora</th>";
-    echo "<th>Profesor de Guardia</th>";
-    echo "<th>Informacion del profesor con Id:</th>";
-    echo "</tr>";
+echo "<table>";
+echo " <tr><th>Hora</th><th>Profesor de guardia</th>";
+if (isset($_POST["btnDetalles"])) {
+    echo "<th>Información del Profesor con Id:" . $_POST["btnDetalles"] . "</th></tr>";
+} else {
+    echo "<th>Información del Profesor con Id:</th></tr>";
+    
+}
 
-    for ($hora = 1; $hora <= count($horas); $hora++) {
-
-        if ($hora != 4) {
-            echo "<tr>";
-            echo "<td>" . $horas[$hora] . "</td>";
-            echo "<td>";
-            echo "<ol>";
-            foreach($profesores_guardia[$hora] as $tupla){
-                echo "<li><button class='enlace' name='btnDetalles' value='".$tupla["id_usuario"]."'>".$tupla["nombre"]."</button></li>";
-            }
-            echo "</ol>";
-            echo "</td>";
-            echo "</tr>";
+for ($hora = 1; $hora <= count($horas); $hora++) {
+    if ($hora != 4) {
+        echo "<tr>";
+        echo "<td>" . $horas[$hora] . "</td>";
+        echo "<td>";
+        echo "<form method='post' action='index.php'>";
+        echo "<ol>";
+        foreach ($profesores_guardia[$hora] as $tupla) {
+            echo "<li><button name='btnDetalles' class='enlace' value=" . $tupla['id_usuario'] . ">" . $tupla["nombre"] . "</button></li>";
         }
+        echo "</ol>";
+        echo "</form>";
+        echo "</td>";
+        echo "<td>";
+        if(isset($_POST['btnDetalles'])){
+
+            $respuesta = consumir_servicios_REST(DIR_SERV . "/obtener_usuario/".$_POST["btnDetalles"],"GET", $datos_env);
+            $json2 = json_decode($respuesta, true);
+    
+            if (!$json) {
+                session_destroy();
+                die(error_page("Práctica Rec 3", "<h1>Práctica Rec 3</h1><p>Sin respuesta oportuna de la API</p>"));
+            }
+            if (isset($json["error_bd"])) {
+    
+                session_destroy();
+                consumir_servicios_REST(DIR_SERV . "/salir", "POST", $datos_env);
+                die(error_page("Práctica Rec 3", "<h1>Práctica Rec 3</h1><p>" . $json["error_bd"] . "</p>"));
+            }
+    
+            if (isset($json["no_auth"])) {
+                session_unset();
+                $_SESSION["seguridad"] = "Usted ha dejado de tener acceso a la API. Por favor vuelva a loguearse.";
+                header("Location:index.php");
+                exit();
+            }
+
+
+            echo "Nombre:".$;
+            echo "Usuario:".$datos_detalles["usuario"];
+            echo "Contraseña:";
+            echo "Email:".$datos_detalles["email"];
+        }
+        echo "</td>";
+        echo "</tr>";
     }
-
-
-    echo "</table>";
+}
+echo "</table>";
     ?>
 
 </body>

@@ -102,10 +102,6 @@ function obtener_usuario($id_usuario){
         $consulta="select * from usuarios wherere id_usuario=?";
         $sentencia=$conexion->prepare($consulta);
         $sentencia->execute([$id_usuario]);
-        $respuesta["usuario"]=$sentencia->fetchAll(PDO::FETCH_ASSOC);
-        $sentencia=null;
-        $conexion=null;
-        return $respuesta;
         
     }
     catch(PDOException $e){
@@ -114,6 +110,12 @@ function obtener_usuario($id_usuario){
         $respuesta["error_bd"]="Error en la consulta. Error:".$e->getMessage();
         return $respuesta;
     }
+
+    $respuesta["usuarios"]=$sentencia->fetchAll(PDO::FETCH_ASSOC);
+    
+    $sentencia=null;
+    $conexion=null;
+    return $respuesta;
 }
 
 
@@ -128,7 +130,10 @@ function  obtener_usuarios_guardia($dia,$hora){
     }
 
     try{
-        $consulta = "SELECT * FROM usuarios INNER JOIN horario_lectivo ON usuarios.id_usuario = horario_lectivo.usuario  WHERE horario_lectivo.hora=? AND horario_lectivo.dia=? AND horario_lectivo.grupo=51";
+        $consulta="SELECT horario_lectivo.*,usuarios.* FROM horario_lectivo  
+        INNER JOIN usuarios ON horario_lectivo.usuario=usuarios.id_usuario 
+        INNER JOIN grupos ON horario_lectivo.grupo=grupos.id_grupo 
+        where dia=? and hora=? and grupos.nombre='GUARD'; ";
         $sentencia=$conexion->prepare($consulta);
         $sentencia->execute([$dia,$hora]);
 
@@ -141,7 +146,7 @@ function  obtener_usuarios_guardia($dia,$hora){
         return $respuesta;
     }
 
-    $respuesta["usuario"]=$sentencia->fetchAll(PDO::FETCH_ASSOC);
+    $respuesta["usuarios"]=$sentencia->fetchAll(PDO::FETCH_ASSOC);
     
     $sentencia=null;
     $conexion=null;
