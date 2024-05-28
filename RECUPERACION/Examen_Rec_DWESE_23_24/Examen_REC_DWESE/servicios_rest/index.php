@@ -58,6 +58,25 @@ $app->get("/usuario/{id_usuario}", function ($request) {
 
 
 
+$app->get('/usuariosGuardia/{dia}/{hora}',function($request){
+
+    $api_session=$request->getParam("api_session");
+    session_id($api_session);
+    session_start();
+    if(isset($_SESSION["usuario"])){
+        
+        $dia = $request->getAttribute("dia");
+        $hora = $request->getAttribute("hora");
+        echo json_encode(obtener_usuarios_guardia($dia,$hora));
+
+    }else{
+
+        session_destroy();
+        $respuesta["no_auth"] = "No tienes permiso para usar este servicio";
+        echo json_encode($respuesta);
+    }
+   
+});
 
 
 // Una vez creado servicios los pongo a disposición

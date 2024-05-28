@@ -117,7 +117,7 @@ function obtener_usuario($id_usuario){
 }
 
 
-function  obtener_usuarios_guarida($dia,$hora){
+function  obtener_usuarios_guardia($dia,$hora){
     
     try{
         $conexion=new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD,USUARIO_BD,CLAVE_BD,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'")); 
@@ -128,13 +128,10 @@ function  obtener_usuarios_guarida($dia,$hora){
     }
 
     try{
-        $consulta = "SELECT * FROM usuarios INNER JOIN horario_lectivo ON usuarios.id_usuarios = horario_lectivo.usuario  WHERE horario_lectivo.hora=? AND horario_lectivo.dia=?;";
+        $consulta = "SELECT * FROM usuarios INNER JOIN horario_lectivo ON usuarios.id_usuario = horario_lectivo.usuario  WHERE horario_lectivo.hora=? AND horario_lectivo.dia=? AND horario_lectivo.grupo=51";
         $sentencia=$conexion->prepare($consulta);
-        $sentencia->execute([$id_usuario]);
-        $respuesta["usuario"]=$sentencia->fetchAll(PDO::FETCH_ASSOC);
-        $sentencia=null;
-        $conexion=null;
-        return $respuesta;
+        $sentencia->execute([$dia,$hora]);
+
 
     }catch(PDOException $e){
 
@@ -143,6 +140,23 @@ function  obtener_usuarios_guarida($dia,$hora){
         $respuesta["error_bd"]="Error en la consulta. Error:".$e->getMessage();
         return $respuesta;
     }
+
+    $respuesta["usuario"]=$sentencia->fetchAll(PDO::FETCH_ASSOC);
+    
+    $sentencia=null;
+    $conexion=null;
+    return $respuesta;
 }
+
+
+
+
+
+
+
+
+
+
+
 
 ?>
