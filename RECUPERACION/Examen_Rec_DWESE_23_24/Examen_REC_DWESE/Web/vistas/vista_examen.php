@@ -1,6 +1,41 @@
 <!-- NO TOCAR -->
 <?php
 
+
+if(isset($_POST['btnDetalles'])){
+
+    $respuesta = consumir_servicios_REST(DIR_SERV . "/usuario/".$_POST["btnDetalles"],"GET", $datos_env);
+    $json2 = json_decode($respuesta, true);
+
+    if (!$json) {
+        session_destroy();
+        die(error_page("Práctica Rec 3", "<h1>Práctica Rec 3</h1><p>Sin respuesta oportuna de la API</p>"));
+    }
+    if (isset($json["error_bd"])) {
+
+        session_destroy();
+        consumir_servicios_REST(DIR_SERV . "/salir", "POST", $datos_env);
+        die(error_page("Práctica Rec 3", "<h1>Práctica Rec 3</h1><p>" . $json["error_bd"] . "</p>"));
+    }
+
+    if (isset($json["no_auth"])) {
+        session_unset();
+        $_SESSION["seguridad"] = "Usted ha dejado de tener acceso a la API. Por favor vuelva a loguearse.";
+        header("Location:index.php");
+        exit();
+    }
+
+    $detalles_profesor=$json["usuario"];
+}
+
+
+
+
+
+
+
+
+
 $dia = date("w");
 
 
@@ -96,6 +131,7 @@ for ($hora = 1; $hora <= count($horas); $hora++) {
         td {
             border: 1px solid black;
             padding: 0 1rem;
+            text-align: left;
         }
 
         table {
@@ -144,35 +180,18 @@ for ($hora = 1; $hora <= count($horas); $hora++) {
         echo "</form>";
         echo "</td>";
         echo "<td>";
-        if(isset($_POST['btnDetalles'])){
-
-            $respuesta = consumir_servicios_REST(DIR_SERV . "/obtener_usuario/".$_POST["btnDetalles"],"GET", $datos_env);
-            $json2 = json_decode($respuesta, true);
-    
-            if (!$json) {
-                session_destroy();
-                die(error_page("Práctica Rec 3", "<h1>Práctica Rec 3</h1><p>Sin respuesta oportuna de la API</p>"));
+        if(isset($_POST["btnDetalles"]) && $hora==1){
+            echo "<p><b>Nombre: </b>".$detalles_profesor["nombre"]."</p>";
+            echo "<p><b>Usuario: </b>".$detalles_profesor["usuario"]."</p>";
+            echo "<p><b>Contraseña:</b></p>";
+            if(isset($detalles_profesor["email"])){
+                echo "<p><b>Email: </b>".$detalles_profesor["email"]."</p>";
+            }else{
+                echo "<p><b>Email: </b>Email no disponible</p>";
             }
-            if (isset($json["error_bd"])) {
-    
-                session_destroy();
-                consumir_servicios_REST(DIR_SERV . "/salir", "POST", $datos_env);
-                die(error_page("Práctica Rec 3", "<h1>Práctica Rec 3</h1><p>" . $json["error_bd"] . "</p>"));
-            }
-    
-            if (isset($json["no_auth"])) {
-                session_unset();
-                $_SESSION["seguridad"] = "Usted ha dejado de tener acceso a la API. Por favor vuelva a loguearse.";
-                header("Location:index.php");
-                exit();
-            }
-
-
-            echo "Nombre:".$;
-            echo "Usuario:".$datos_detalles["usuario"];
-            echo "Contraseña:";
-            echo "Email:".$datos_detalles["email"];
+            
         }
+
         echo "</td>";
         echo "</tr>";
     }
