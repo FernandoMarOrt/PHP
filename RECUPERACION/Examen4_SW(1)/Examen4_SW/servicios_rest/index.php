@@ -13,7 +13,6 @@ $app->post('/login',function($request){
     $usuario=$request->getParam("usuario");
     $clave=$request->getParam("clave");
 
-
     echo json_encode(login($usuario,$clave));
 });
 
@@ -30,14 +29,18 @@ $app->get('/logueado',function($request){
         session_destroy();
         echo json_encode(array("no_auth"=>"No tienes permisos para usar este servicio"));
     }
+
+
 });
+
+
 $app->post('/salir',function($request){
 
     $api_session=$request->getParam("api_session");
     session_id($api_session);
     session_start();
     session_destroy();
-    echo json_encode(array("logout"=>"Cerrada sesión en la API"));
+    echo json_encode(array("log_out"=>"Cerrada sesión en la API"));
 });
 
 

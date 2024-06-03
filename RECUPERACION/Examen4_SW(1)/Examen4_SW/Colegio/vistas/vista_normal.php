@@ -33,9 +33,9 @@ if(isset($obj->error))
 <body>
     <h1>Notas de los alumnos</h1>
     <div>
-        Bienvenido <strong><?php echo $datos_usuario_log->usuario;?></strong> - <form class='enlinea' action="index.php" method="post"><button name="btnSalir" type="submit" class='enlace'>Salir</form> 
+        Bienvenido <strong><?php echo $datos_usuario_log["usuario"];?></strong> - <form class='enlinea' action="index.php" method="post"><button name="btnSalir" type="submit" class='enlace'>Salir</form> 
     </div>
-    <h2>Notas del alumno <?php echo $datos_usuario_log->nombre;?></h2>
+    <h2>Notas del alumno <?php echo $datos_usuario_log["nombre"]?></h2>
 
     <table>
         <tr><th>Asignatura</th><th>Nota</th></tr>

@@ -11,32 +11,32 @@ if(isset($_POST["btnLogin"]))
         $datos["usuario"]=$_POST["usuario"];
         $datos["clave"]=md5($_POST["clave"]);
         $respuesta=consumir_servicios_REST($url,"POST",$datos);
-        $obj=json_decode($respuesta);
+        $obj=json_decode($respuesta,true);
         if(!$obj)
         {
             session_destroy();
             die(error_page("Examen4 DWESE Curso 23-24","<h1>Notas de los alumnos</h1><p>Error consumiendo el servicio: ".$url."</p>"));
         }
 
-        if(isset($obj->error))
+        if(isset($obj["error"]))
         {
             session_destroy();
             die(error_page("Examen4 DWESE Curso 23-24","<h1>Notas de los alumnos</h1><p>".$obj->error."</p>"));
         }
 
-        if(isset($obj->mensaje))
+        if(isset($obj["mensaje"]))
         {
             $error_usuario=true;
         }
         else
         {
 
-            $_SESSION["usuario"]=$obj->usuario->usuario;
-            $_SESSION["clave"]=$obj->usuario->clave;
-            $_SESSION["ult_accion"]=time();
-            $_SESSION["api_session"]=$obj->api_session;
+            $_SESSION["usuario"] = $obj["usuario"]["usuario"];
+            $_SESSION["clave"] = $obj["usuario"]["clave"];
+            $_SESSION["ult_accion"] = time();
+            $_SESSION["api_session"] = $obj["api_session"];
             
-            if($obj->usuario->tipo=="tutor")
+            if($obj["usuario"]["tipo"]=="tutor")
                 header("Location:admin/gest_libros.php");
             else
                 header("Location:index.php");

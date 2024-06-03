@@ -18,7 +18,7 @@ if(isset($_SESSION["usuario"]))
     $salto="index.php";
     require "src/seguridad.php";
 
-    if($datos_usuario_log->tipo=="alumno")
+    if($datos_usuario_log["tipo"]=="alumno")
         require "vistas/vista_normal.php";
     else
     {
