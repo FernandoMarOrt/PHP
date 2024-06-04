@@ -3,20 +3,19 @@
 if(isset($_POST["btnBorrar"]))
 {
     
-    $url=DIR_SERV."/quitarNota/".$_POST["alumno"];
-    $datos["cod_asig"]=$_POST["asignatura"];
-    $respuesta=consumir_servicios_REST($url,"DELETE",$datos);
-    $obj=json_decode($respuesta);
-    if(!$obj)
+    $datos_env["cod_asig"]=$_POST["asignatura"];
+    $respuesta=consumir_servicios_REST(DIR_SERV."/quitarNota/".$_POST["alumno"],"DELETE",$datos);
+    $json=json_decode($respuesta);
+    if(!$json)
     {
         session_destroy();
         die(error_page("Examen4 DWESE Curso 23-24","<h1>Notas de los alumnos</h1><p>Error consumiendo el servicio: ".$url."</p>"));
     }
 
-    if(isset($obj->error))
+    if(isset($json["error"]))
     {
         session_destroy();
-        die(error_page("Examen4 DWESE Curso 23-24","<h1>Notas de los alumnos</h1><p>".$obj->error."</p>"));
+        die(error_page("Examen4 DWESE Curso 23-24","<h1>Notas de los alumnos</h1><p>".$json["error"]."</p>"));
     }
 
     $_SESSION["alumno"]=$_POST["alumno"];
@@ -32,21 +31,21 @@ if(isset($_POST["btnCambiar"]))
     $error_nota=$_POST["nota"]=="" || !is_numeric($_POST["nota"]) || $_POST["nota"]<0 || $_POST["nota"]>10;
     if(!$error_nota)
     {
-        $url=DIR_SERV."/cambiarNota/".$_POST["alumno"];
+
         $datos["cod_asig"]=$_POST["asignatura"];
         $datos["nota"]=$_POST["nota"];
-        $respuesta=consumir_servicios_REST($url,"PUT",$datos);
-        $obj=json_decode($respuesta);
-        if(!$obj)
+        $respuesta=consumir_servicios_REST(DIR_SERV."/cambiarNota/".$_POST["alumno"],"PUT",$datos);
+        $json=json_decode($respuesta);
+        if(!$json)
         {
             session_destroy();
             die(error_page("Examen4 DWESE Curso 23-24","<h1>Notas de los alumnos</h1><p>Error consumiendo el servicio: ".$url."</p>"));
         }
 
-        if(isset($obj->error))
+        if(isset($json["error"]))
         {
             session_destroy();
-            die(error_page("Examen4 DWESE Curso 23-24","<h1>Notas de los alumnos</h1><p>".$obj->error."</p>"));
+            die(error_page("Examen4 DWESE Curso 23-24","<h1>Notas de los alumnos</h1><p>".$json["error"]."</p>"));
         }
 
         $_SESSION["alumno"]=$_POST["alumno"];
@@ -62,17 +61,17 @@ if(isset($_POST["btnCalificar"]))
     $url=DIR_SERV."/ponerNota/".$_POST["alumno"];
     $datos["cod_asig"]=$_POST["cod_asig"];
     $respuesta=consumir_servicios_REST($url,"POST",$datos);
-    $obj=json_decode($respuesta);
-    if(!$obj)
+    $json=json_decode($respuesta);
+    if(!$json)
     {
         session_destroy();
         die(error_page("Examen4 DWESE Curso 23-24","<h1>Notas de los alumnos</h1><p>Error consumiendo el servicio: ".$url."</p>"));
     }
 
-    if(isset($obj->error))
+    if(isset($json["error"]))
     {
         session_destroy();
-        die(error_page("Examen4 DWESE Curso 23-24","<h1>Notas de los alumnos</h1><p>".$obj->error."</p>"));
+        die(error_page("Examen4 DWESE Curso 23-24","<h1>Notas de los alumnos</h1><p>".$json["error"]."</p>"));
     }
 
     $_SESSION["alumno"]=$_POST["alumno"];
@@ -93,52 +92,50 @@ if(isset($_SESSION["cod_asig"]))
     $_POST["btnEditar"]=true;
 }
   
-
-$url=DIR_SERV."/alumnos";
-$respuesta=consumir_servicios_REST($url,"GET",$datos);
-$obj=json_decode($respuesta);
-if(!$obj)
+$respuesta=consumir_servicios_REST(DIR_SERV."/alumnos","GET",$datos);
+$json=json_decode($respuesta);
+if(!$json)
 {
     session_destroy();
     die(error_page("Examen4 DWESE Curso 23-24","<h1>Notas de los alumnos</h1><p>Error consumiendo el servicio: ".$url."</p>"));
 }
 
-if(isset($obj->error))
+if(isset($json["error"]))
 {
     session_destroy();
-    die(error_page("Examen4 DWESE Curso 23-24","<h1>Notas de los alumnos</h1><p>".$obj->error."</p>"));
+    die(error_page("Examen4 DWESE Curso 23-24","<h1>Notas de los alumnos</h1><p>".$json["error"]."</p>"));
 }
 
 if(isset($_POST["alumno"] ))
 {
-    $url=DIR_SERV."/notasAlumno/".$_POST["alumno"];
-    $respuesta=consumir_servicios_REST($url,"GET",$datos);
-    $obj2=json_decode($respuesta);
-    if(!$obj2)
+ 
+    $respuesta=consumir_servicios_REST($DIR_SERV."/notasAlumno/".$_POST["alumno"],"GET",$datos);
+    $json=json_decode($respuesta);
+    if(!$json)
     {
         session_destroy();
         die(error_page("Examen4 DWESE Curso 23-24","<h1>Notas de los alumnos</h1><p>Error consumiendo el servicio: ".$url."</p>"));
     }
 
-    if(isset($obj2->error))
+    if(isset($json["error"]))
     {
         session_destroy();
-        die(error_page("Examen4 DWESE Curso 23-24","<h1>Notas de los alumnos</h1><p>".$obj2->error."</p>"));
+        die(error_page("Examen4 DWESE Curso 23-24","<h1>Notas de los alumnos</h1><p>".$json["error"]."</p>"));
     }
 
     $url=DIR_SERV."/NotasNoEvalAlumno/".$_POST["alumno"];
     $respuesta=consumir_servicios_REST($url,"GET",$datos);
-    $obj3=json_decode($respuesta);
-    if(!$obj3)
+    $json=json_decode($respuesta);
+    if(!$json)
     {
         session_destroy();
         die(error_page("Examen4 DWESE Curso 23-24","<h1>Notas de los alumnos</h1><p>Error consumiendo el servicio: ".$url."</p>"));
     }
 
-    if(isset($obj3->error))
+    if(isset($json["error"]))
     {
         session_destroy();
-        die(error_page("Examen4 DWESE Curso 23-24","<h1>Notas de los alumnos</h1><p>".$obj3->error."</p>"));
+        die(error_page("Examen4 DWESE Curso 23-24","<h1>Notas de los alumnos</h1><p>".$json["error"]."</p>"));
     }
 
 
@@ -166,7 +163,7 @@ if(isset($_POST["alumno"] ))
         Bienvenido <strong><?php echo $datos_usuario_log->usuario;?></strong> - <form class='enlinea' action="../index.php" method="post"><button name="btnSalir" type="submit" class='enlace'>Salir</form> 
     </div>
     <?php
-    if(count($obj->alumnos)<=0)
+    if(count($json["alumnos"])<=0)
     {
         echo "<p>En estos momentos no tenemos ningún alumno registrado en la BD.</p>";
     }
@@ -178,15 +175,15 @@ if(isset($_POST["alumno"] ))
                 <label for="alumno">Seleccione un alumno: </label>
                 <select name="alumno" id="alumno">
                     <?php
-                    foreach($obj->alumnos as $tupla)
+                    foreach($json["alumnos"] as $tupla)
                     {
-                        if(isset($_POST["alumno"]) && $_POST["alumno"]==$tupla->cod_usu)
+                        if(isset($_POST["alumno"]) && $_POST["alumno"]==$tupla["cod_usu"])
                         {
-                            echo "<option selected value='".$tupla->cod_usu."'>".$tupla->nombre."</option>";
-                            $nombre_alumno=$tupla->nombre;
+                            echo "<option selected value='".$tupla["cod_usu"]."'>".$tupla["nombre"]."</option>";
+                            $nombre_alumno=$tupla["nombre"];
                         }
                         else
-                            echo "<option value='".$tupla->cod_usu."'>".$tupla->nombre."</option>";
+                            echo "<option value='".$tupla["cod_usu"]."'>".$tupla["nombre"]."</option>";
                     }
 
                     ?>
@@ -202,13 +199,13 @@ if(isset($_POST["alumno"] ))
             echo "<table>";
             echo "<tr><th>Asignatura</th><th>Nota</th><th>Acción</th></tr>";
             
-                foreach ($obj2->notas as $tupla) {
+                foreach ($json["notas"] as $tupla) {
                     echo "<tr>";
-                    echo "<td>".$tupla->denominacion."</td>";
-                    if((isset($_POST["btnEditar"]) && $_POST["asignatura"]==$tupla->cod_asig) || (isset($_POST["btnCambiar"]) && $_POST["asignatura"]==$tupla->cod_asig))
+                    echo "<td>".$tupla["denominacion"]."</td>";
+                    if((isset($_POST["btnEditar"]) && $_POST["asignatura"]==$tupla["cod_asig"]) || (isset($_POST["btnCambiar"]) && $_POST["asignatura"]==$tupla["cod_asig"]))
                     {
                         if(isset($_POST["btnEditar"]))
-                            $nota=$tupla->nota;
+                            $nota=$tupla["nota"];
                         else
                             $nota=$_POST["nota"];
 
@@ -220,15 +217,15 @@ if(isset($_POST["alumno"] ))
                         
                         echo "</td>";
                         echo "<td>";
-                        echo "<input type='hidden' name='alumno' value='".$_POST["alumno"]."'><input type='hidden' name='asignatura' value='".$tupla->cod_asig."'>";
+                        echo "<input type='hidden' name='alumno' value='".$_POST["alumno"]."'><input type='hidden' name='asignatura' value='".$tupla["cod_asig"]."'>";
                         echo "<button type='submit' class='enlace' name='btnCambiar'>Cambiar</button> - <button type='submit' class='enlace' name='btnAtras'>Atrás</button></form>";
                         echo "</td>";
                     }
                     else{
-                        echo "<td>".$tupla->nota."</td>";
+                        echo "<td>".$tupla["nota"]."</td>";
                         echo "<td>";
                         echo "<form action='index.php' method='post'>";
-                        echo "<input type='hidden' name='alumno' value='".$_POST["alumno"]."'><input type='hidden' name='asignatura' value='".$tupla->cod_asig."'>";
+                        echo "<input type='hidden' name='alumno' value='".$_POST["alumno"]."'><input type='hidden' name='asignatura' value='".$tupla["cod_asig"]."'>";
                         echo "<button type='submit' class='enlace' name='btnEditar'>Editar</button> - <button type='submit' class='enlace' name='btnBorrar'>Borrar</button>";
                         echo "</form>";
                         echo "</td>";
@@ -250,7 +247,7 @@ if(isset($_POST["alumno"] ))
                     
             }    
 
-            if(count($obj3->notas)>0)
+            if(count($json["notas"])>0)
             {
             ?>
                 <form action="index.php" method="post">
@@ -259,9 +256,9 @@ if(isset($_POST["alumno"] ))
                         <label for="cod_asig">Asignaturas que a <strong><?php echo $nombre_alumno;?></strong> aún le quedan por calificar.</label>
                         <select id="cod_asig" name="cod_asig">
                         <?php
-                            foreach($obj3->notas as $tupla)
+                            foreach($json["notas"] as $tupla)
                             {
-                                echo "<option value='".$tupla->cod_asig."'>".$tupla->denominacion."</option>";
+                                echo "<option value='".$tupla["cod_asig"]."'>".$tupla["denominacion"]."</option>";
                             }
                         ?>
                         </select>

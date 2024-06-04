@@ -21,6 +21,6 @@ function error_page($title,$body)
 }
 
 
-define("DIR_SERV","http://localhost/Proyectos/Examen4_SW/servicios_rest");
+define("DIR_SERV","http://localhost/Proyectos/PHP/RECUPERACION/Examen4_SW_23_24/Examen4_SW/Colegio/servicios_rest");
 define("MINUTOS",15);
 ?>

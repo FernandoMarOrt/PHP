@@ -1,18 +1,32 @@
 <?php
-$url=DIR_SERV."/notasAlumno/".$datos_usuario_log->cod_usu;
-$respuesta=consumir_servicios_REST($url,"GET",$datos);
-$obj=json_decode($respuesta);
-if(!$obj)
+$respuesta=consumir_servicios_REST(DIR_SERV."/notasAlumno/".$datos_usuario_log["cod_usu"]."","GET",$datos_env);
+$json=json_decode($respuesta,true);
+
+if(!$json)
 {
     session_destroy();
-    die(error_page("Examen4 DWESE Curso 23-24","<h1>Notas de los alumnos</h1><p>Error consumiendo el servicio: ".$url."</p>"));
+    die(error_page("Examen 4","<h1>Práctica Rec 3</h1><p>Sin respuesta oportuna de la API</p>"));  
 }
 
-if(isset($obj->error))
+
+if(isset($json["error"]))
 {
+
     session_destroy();
-    die(error_page("Examen4 DWESE Curso 23-24","<h1>Notas de los alumnos</h1><p>".$obj->error."</p>"));
+    consumir_servicios_REST(DIR_SERV."/salir","POST",$datos_env);
+    die(error_page("Examen 4","<h1>Examen 4</h1><p>".$json["error"]."</p>"));
 }
+
+if(isset($json["no_auth"]))
+{
+   session_unset();
+   $_SESSION["seguridad"]="Usted ha dejado de tener acceso a la API. Por favor vuelva a loguearse.";
+   header("Location:index.php");
+   exit();
+}
+
+
+
 
 ?>
 
@@ -40,10 +54,10 @@ if(isset($obj->error))
     <table>
         <tr><th>Asignatura</th><th>Nota</th></tr>
         <?php
-            foreach ($obj->notas as $tupla) {
+            foreach ($json["notas"] as $tupla) {
                 echo "<tr>";
-                echo "<td>".$tupla->denominacion."</td>";
-                echo "<td>".$tupla->nota."</td>";
+                echo "<td>".$tupla["denominacion"]."</td>";
+                echo "<td>".$tupla["nota"]."</td>";
                 echo "</tr>";
             }
         ?>
