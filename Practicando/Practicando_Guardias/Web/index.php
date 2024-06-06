@@ -1,18 +1,22 @@
 <?php
 session_name("Practicando");
 session_start();
+if(isset($_POST["btnSalir"])){
 
-require "src/funciones_ctes.php";
 
+    $datos_env["api_session"];
+    consumir_servicios_REST(DIR_SERV."/salir","GET",$datos_env);
+
+    session_destroy();
+    header("Location:index.php");
+    exit();
+}
 
 if(isset($_SESSION["usuario"])){
 
-    require "src/seguridad.php.php";
-
-    require "vistas/vista_normal.php";
     
-}else{
-    require "vistas/vista_login.php";
-}
 
-?>
+}else{
+
+
+}

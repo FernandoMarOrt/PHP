@@ -19,7 +19,7 @@ $app->post("/salir", function ($request) {
 
 $app->post("/login", function ($request) {
 
-    $datos[] = $request->getParam("lector");
+    $datos[] = $request->getParam("usuario");
     $datos[] = $request->getParam("clave");
     echo json_encode(login($datos));
 });
@@ -39,70 +39,43 @@ $app->post("/logueado", function ($request) {
     }
 });
 
-$app->post("/insertar_libros", function ($request) {
+$app->get("/obtener_libros_home", function () {
 
+    echo json_encode(obtener_libros_home());
+});
+// hasta aqui modificados
+$app->post("/insertar_libro", function ($request) {
 
-    session_id($request->getParam("api_key"));
-    session_start();
+    $datos[] = $request->getParam("referencia");
+    $datos[] = $request->getParam("titulo");
+    $datos[] = $request->getParam("autor");
+    $datos[] = $request->getParam("descripcion");
+    $datos[] = $request->getParam("precio");
 
-    if (isset($_SESSION["usuario"])) {
-    
-        $datos[] = $request->getParam("referencia");
-        $datos[] = $request->getParam("titulo");
-        $datos[] = $request->getParam("autor");
-        $datos[] = $request->getParam("descripcion");
-        $datos[] = $request->getParam("precio");
-
-        echo json_encode(insertar_usuario($datos));
-    } else {
-        session_destroy();
-        $respuesta["no_auth"] = "No tienes permiso para usar este servicio";
-        echo json_encode($respuesta);
-    }
+    echo json_encode(insertar_libro($datos));
 });
 
 
 $app->put("/actualizar_foto", function ($request) {
 
-    $datos[] = $request->getParam("portada"); //Anteriormente nombre_foto
+    $datos[] = $request->getParam("portada");
     $datos[] = $request->getParam("referencia");
 
 
     echo json_encode(actualizar_foto($datos));
 });
 
-
 $app->get("/repetido_insert/{tabla}/{columna}/{valor}", function ($request) {
 
-
-
-    session_id($request->getParam("api_key"));
-    session_start();
-
-    if (isset($_SESSION["usuario"])) {
-    
-        $tabla = $request->getAttribute("tabla");
-        $columna = $request->getAttribute("columna");
-        $valor = $request->getAttribute("valor");
-        echo json_encode(repetido_insertando($tabla, $columna, $valor));
-
-
-    } else {
-        session_destroy();
-        $respuesta["no_auth"] = "No tienes permiso para usar este servicio";
-        echo json_encode($respuesta);
-    }
-
-
-
-
+    $tabla = $request->getAttribute("tabla");
+    $columna = $request->getAttribute("columna");
+    $valor = $request->getAttribute("valor");
+    echo json_encode(repetido_insertando($tabla, $columna, $valor));
 });
 
 $app->get("/repetido_edit/{tabla}/{columna}/{valor}/{columna_clave}/{valor_clave}", function ($request) {
-
     session_id($request->getParam("api_key"));
     session_start();
-
     if (isset($_SESSION["usuario"]) && $_SESSION["tipo"] == "admin") {
         $tabla = $request->getAttribute("tabla");
         $columna = $request->getAttribute("columna");
@@ -110,7 +83,6 @@ $app->get("/repetido_edit/{tabla}/{columna}/{valor}/{columna_clave}/{valor_clave
         $columna_clave = $request->getAttribute("columna_clave");
         $valor_clave = $request->getAttribute("valor_clave");
         echo json_encode(repetido_editando($tabla, $columna, $valor, $columna_clave, $valor_clave));
-
     } else {
         session_destroy();
         $respuesta["no_auth"] = "No tienes permiso para usar este servicio";
@@ -119,19 +91,18 @@ $app->get("/repetido_edit/{tabla}/{columna}/{valor}/{columna_clave}/{valor_clave
 });
 
 
-$app->get("/obtener_libros", function () {
+$app->get("/obtener_libros", function ($request) {
 
-    echo json_encode(obtener_libros());
+    session_id($request->getParam("api_key"));
+    session_start();
+    if (isset($_SESSION["usuario"]) && $_SESSION["tipo"] == "admin") {
+        echo json_encode(obtener_todos_libros());
+    } else {
+        session_destroy();
+        $respuesta["no_auth"] = "No tienes permiso para usar este servicio";
+        echo json_encode($respuesta);
+    }
 });
-
-$app->get("/obtener_libro/{referencia}", function ($request) {
-    
-    $referencia = $request->getAtrribute("referencia");
-
-    echo json_encode(obtener_libro($referencia));
-});
-
-
 
 $app->get("/obtener_libros_pag/{pag}/{n_registros}", function ($request) {
     session_id($request->getParam("api_key"));
@@ -145,19 +116,17 @@ $app->get("/obtener_libros_pag/{pag}/{n_registros}", function ($request) {
     }
 });
 
-
 $app->get("/obtener_libros_filtro", function ($request) {
     session_id($request->getParam("api_key"));
     session_start();
     if (isset($_SESSION["usuario"]) && $_SESSION["tipo"] == "admin") {
-        echo json_encode(obtener_libros_filtro($request->getParam("buscar")));
+        echo json_encode(obtener_todos_libros_filtro($request->getParam("buscar")));
     } else {
         session_destroy();
         $respuesta["no_auth"] = "No tienes permiso para usar este servicio";
         echo json_encode($respuesta);
     }
 });
-
 
 $app->get("/obtener_libros_filtro_pag/{pag}/{n_registros}", function ($request) {
     session_id($request->getParam("api_key"));
@@ -171,12 +140,11 @@ $app->get("/obtener_libros_filtro_pag/{pag}/{n_registros}", function ($request) 
     }
 });
 
-
-$app->get("/obtener_detalles/{id_usuario}", function ($request) {
+$app->get("/obtener_detalles/{referencia}", function ($request) {
     session_id($request->getParam("api_key"));
     session_start();
     if (isset($_SESSION["usuario"]) && $_SESSION["tipo"] == "admin") {
-        echo json_encode(obtener_detalles_usuario($request->getAttribute("id_usuario")));
+        echo json_encode(obtener_detalles_libro($request->getAttribute("referencia")));
     } else {
         session_destroy();
         $respuesta["no_auth"] = "No tienes permiso para usar este servicio";
@@ -184,11 +152,11 @@ $app->get("/obtener_detalles/{id_usuario}", function ($request) {
     }
 });
 
-$app->delete("/borrar_usuario/{id_usuario}", function ($request) {
+$app->delete("/borrar_libro/{referencia}", function ($request) {
     session_id($request->getParam("api_key"));
     session_start();
     if (isset($_SESSION["usuario"]) && $_SESSION["tipo"] == "admin") {
-        echo json_encode(borrar_usuario($request->getAttribute("id_usuario")));
+        echo json_encode(borrar_libro($request->getAttribute("referencia")));
     } else {
         session_destroy();
         $respuesta["no_auth"] = "No tienes permiso para usar este servicio";
@@ -196,5 +164,24 @@ $app->delete("/borrar_usuario/{id_usuario}", function ($request) {
     }
 });
 
+$app->put("/actualizar_libro/{referencia}", function ($request) {
+    session_id($request->getParam("api_key"));
+    session_start();
+    if (isset($_SESSION["usuario"]) && $_SESSION["tipo"] == "admin") {
+
+        $datos[] = $request->getParam("titulo");
+        $datos[] = $request->getParam("autor");
+        $datos[] = $request->getParam("descripcion");
+        $datos[] = $request->getParam("precio");
+        $datos[] = $request->getAttribute("referencia");
+
+
+        echo json_encode(actualizar_libro($datos));
+    } else {
+        session_destroy();
+        $respuesta["no_auth"] = "No tienes permiso para usar este servicio";
+        echo json_encode($respuesta);
+    }
+});
 
 $app->run();

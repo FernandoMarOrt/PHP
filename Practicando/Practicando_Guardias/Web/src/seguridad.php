@@ -1,55 +1,55 @@
 <?php
 
 $datos_env["api_session"]=$_SESSION["api_session"];
-$respuesta=consumir_servicios_REST(DIR_SERV."/logueado","GET");
-$json=json_encode($respuesta,true);
+$respuesta = consumir_servicios_REST(DIR_SERV."/logueado","GET",$datos_env);
+$json = json_decode($respuesta,true);
 
 
 if(!$json){
 
     session_destroy();
-    die(error_page("Examen","<h1>Examen</h1><p>Sin respuesta oportuna en la api</p>"));
-
+    die(error_page("Examen","<h1>Examen</h1><p>Error al consumir la api</p>"));
 }
+
+
 
 if(isset($json["error_bd"])){
-
     session_destroy();
-    $respuesta=consumir_servicios_REST(DIR_SERV."/salir","POST");
+    consumir_servicios_REST(DIR_SERV."/salir","POST",$datos_env);
     die(error_page("Examen","<h1>Examen</h1><p>".$json["error_bd"]."</p>"));
-    
 }
+
 
 if(isset($json["no_auth"])){
-
+ 
     session_unset();
-    $_SESSION["seguridad"]="Usted ya no tiene acceso a la api";
+    $_SESSION["seguridad"]="Has dejado de tener acceso a esta api";
     header("Location:index.php");
     exit();
-    
 }
+
 
 if(isset($json["mensaje"])){
 
     session_unset();
-    $respuesta=consumir_servicios_REST(DIR_SERV."/salir","POST");
-    $_SESSION["seguridad"]="Usted ya no tiene acceso a la api";
+    consumir_servicios_REST(DIR_SERV."/salir","POST",$datos_env);
+    $_SESSION["seguridad"]="Usted ya no se encuentra registrado en la bd";
     header("Location:index.php");
     exit();
-    
 }
 
-$datos_usuarios_log=$_SESSION["usuario"];
+$datos_usuario_log=$json["usuario"];
 
-if(time()-$_SESSION["ultima-accion"]>MINUTOS*60){
+
+if(time()-$_SESSION["ultima_accion"]>MINUTOS*60){
 
     session_unset();
-    $respuesta=consumir_servicios_REST(DIR_SERV."/salir","POST");
-    $_SESSION["seguridad"]="Usted ya no tiene acceso a la api";
+    consumir_servicios_REST(DIR_SERV."/salir","POST",$datos_env);
+    $_SESSION["seguridad"]="Usted ya no se encuentra registrado en la bd";
     header("Location:index.php");
     exit();
-
 }
 
-$_SESSION["ultima-accion"]=time();
+$_SESSION["ultima_accion"]=time();
+
 ?>
